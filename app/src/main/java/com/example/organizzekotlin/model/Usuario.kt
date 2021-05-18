@@ -1,7 +1,7 @@
 package com.example.organizzekotlin.model
 
-import com.example.organizzekotlin.config.ConfiguracaoFirebase
-import com.google.firebase.database.DatabaseReference
+import android.content.Context
+import com.example.organizzekotlin.firebase.FirebaseCustom
 
 class Usuario{
 
@@ -9,21 +9,25 @@ class Usuario{
     lateinit var nome: String
     lateinit var email: String
     lateinit var senha: String
-    var receitaTotal: Double = 0.0
-    var despesaTotal: Double = 0.0
+    var receitaTotal: Double = 0.00
+    var despesaTotal: Double = 0.00
 
     class Usuario(){
     }
 
     fun salvar(){
 
-        val firebase: DatabaseReference = ConfiguracaoFirebase.getFirebaseDatabase()
-        firebase.child("usuarios")
-            .child(this.idUsuario).setValue(this)
+        FirebaseCustom.firebaseConnection().child("usuarios").child(this.idUsuario).setValue(this)
 
     }
+
 }
 
 
-
+//class AdapterMovimentacao(list: List<Movimentacao>, context: Context) {
+//
+//    var movimentacoes: List<Movimentacao> = list
+//    var context: Context = context
+//
+//}
 
