@@ -3,36 +3,32 @@ package com.example.organizzekotlin.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.example.organizzekotlin.R
 import com.example.organizzekotlin.model.Movimentacao
 
-class AdapterMovimentacao(val movimentacoes: List<Movimentacao>) : RecyclerView.Adapter<AdapterMovimentacao.ViewHolder>() {
-
-    //this method is returning the view for each item in the list
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.adapter_movimentacao, parent, false)
-        return ViewHolder(v)
+internal class AdapterMovimentacao(private var moviesList: List<Movimentacao>) :
+    RecyclerView.Adapter<AdapterMovimentacao.MyViewHolder>() {
+    internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var titulo: TextView = view.findViewById(R.id.textAdapterTitulo)
+        var categoria: TextView = view.findViewById(R.id.textAdapterCategoria)
+        var valor: TextView = view.findViewById(R.id.textAdapterValor)
     }
-
-    //this method is binding the data on the list
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(movimentacoes[position])
+    @NonNull
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.adapter_movimentacao, parent, false)
+        return MyViewHolder(itemView)
     }
-
-    //this method is giving the size of the list
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val movimentacao = moviesList[position]
+        holder.titulo.text = movimentacao.tipo
+        holder.categoria.text = movimentacao.categoria
+        holder.valor.text = movimentacao.valor.toString()
+    }
     override fun getItemCount(): Int {
-        return movimentacoes.size
+        return moviesList.size
     }
-
-    //the class is hodling the list view
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bindItems(movimentacao: Movimentacao) {
-
-
-
-        }
-    }
-
 }

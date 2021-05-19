@@ -32,8 +32,8 @@ class LoginActivity : AppCompatActivity() {
         botaoEntrar = findViewById(R.id.buttonEntrar)
 
         botaoEntrar.setOnClickListener(View.OnClickListener {
-            val textoEmail: String = campoEmail.getText().toString()
-            val textoSenha: String = campoSenha.getText().toString()
+            val textoEmail: String = campoEmail.text.toString()
+            val textoSenha: String = campoSenha.text.toString()
             if (!textoEmail.isEmpty()) {
                 if (!textoSenha.isEmpty()) {
                     usuario = Usuario()
