@@ -1,14 +1,19 @@
 package com.example.organizzekotlin
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import android.widget.TextView
+import android.widget.Toolbar
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.organizzekotlin.adapter.AdapterMovimentacao
@@ -48,13 +53,11 @@ class PrincipalActivity : AppCompatActivity() {
     private lateinit var mesAnoSelecionado: String
 
 
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_principal)
-
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
-        toolbar.title = "Organizze"
-        setSupportActionBar(toolbar)
 
         textoSaldo = findViewById(R.id.textSaldo)
         textoSaudacao = findViewById(R.id.textSaudacao)
@@ -77,7 +80,31 @@ class PrincipalActivity : AppCompatActivity() {
 
     fun swipe() {
 
-        var itemTouch: ItemTouchHelper.Callback = ItemTouchHelper.Callback()
+
+        var itemTouch = object : ItemTouchHelper.Callback(){
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+
+                val dragFlags: Int = ItemTouchHelper.ACTION_STATE_IDLE
+                val swipeFlags: Int = ItemTouchHelper.START  ; ItemTouchHelper.END
+                return makeMovementFlags(dragFlags, swipeFlags)
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+               excluirMovimentacao(viewHolder)
+            }
+
+        }
     }
 
 
