@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.organizzekotlin.adapter.AdapterMovimentacao
-import com.example.organizzekotlin.firebase.FirebaseCustom
+import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
@@ -38,8 +35,8 @@ class PrincipalActivity : AppCompatActivity() {
     private var receitaTotal = 0.0
     private var resumoUsuario = 0.0
 
-    private val autenticacao: FirebaseAuth = FirebaseCustom.firebaseAuth()
-    private val firebaseRef: DatabaseReference = FirebaseCustom.firebaseConnection()
+    private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
+    private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
     private lateinit var usuarioRef: DatabaseReference
     private lateinit var valueEventListenerUsuario: ValueEventListener
     private lateinit var valueEventListenerMovimentacoes: ValueEventListener
@@ -124,7 +121,7 @@ class PrincipalActivity : AppCompatActivity() {
             val idUsuario: String = Base64Custom.codificarBase64(emailUsuario.toString())
             movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario).child(mesAnoSelecionado)
 
-            movimentacaoRef!!.child(movimentacao.key).removeValue()
+            movimentacaoRef!!.child(movimentacao.key.orEmpty()).removeValue()
             adapterMovimentacao.notifyItemRemoved(position)
             atualizarSaldo()
 

@@ -1,53 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    tools:context=".PrincipalActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="logado"
+            type="com.example.organizzekotlin.PrincipalActivity" />
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="0dp"/>
+        android:layout_height="match_parent"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        tools:context=".PrincipalActivity">
 
-    <include layout="@layout/content_principal" />
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:elevation="0dp"/>
 
-    <com.github.clans.fab.FloatingActionMenu
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="10dp"
-        fab:menu_icon="@drawable/ic_adicionar_branco_24dp"
-        app:menu_colorNormal="@color/colorAccent"
-        app:menu_colorPressed="@color/colorAccent"
-        >
+        <include layout="@layout/content_principal" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/menu_despesa"
-            android:onClick="adicionarDespesa"
+        <com.github.clans.fab.FloatingActionMenu
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_adicionar_branco_24dp"
-            fab:fab_colorNormal="@color/colorPrimaryDespesa"
-            fab:fab_label="Despesa"
-            fab:fab_size="mini"
-            />
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp"
+            fab:menu_icon="@drawable/ic_adicionar_branco_24dp"
+            app:menu_colorNormal="@color/colorAccent"
+            app:menu_colorPressed="@color/colorAccent"
+            >
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/menu_receita"
-            android:onClick="adicionarReceita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_adicionar_branco_24dp"
-            fab:fab_colorNormal="@color/colorPrimaryReceita"
-            fab:fab_label="Receita"
-            fab:fab_size="mini"
-            />
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_despesa"
+                android:onClick="adicionarDespesa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_adicionar_branco_24dp"
+                fab:fab_colorNormal="@color/colorPrimaryDespesa"
+                fab:fab_label="Despesa"
+                fab:fab_size="mini"
+                />
 
-    </com.github.clans.fab.FloatingActionMenu>
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_receita"
+                android:onClick="adicionarReceita"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_adicionar_branco_24dp"
+                fab:fab_colorNormal="@color/colorPrimaryReceita"
+                fab:fab_label="Receita"
+                fab:fab_size="mini"
+                />
+
+        </com.github.clans.fab.FloatingActionMenu>
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

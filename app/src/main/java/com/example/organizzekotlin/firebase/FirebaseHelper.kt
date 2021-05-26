@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class FirebaseCustom {
+class FirebaseHelper {
 
 
 
@@ -20,21 +20,13 @@ class FirebaseCustom {
 
 
 
-        fun firebaseConnection(): DatabaseReference {
-
-            return FirebaseDatabase.getInstance().reference;
-
-        }
+        fun firebaseConnection(): DatabaseReference = FirebaseDatabase.getInstance().reference;
 
 
-        fun firebaseAuth(): FirebaseAuth {
 
-            return FirebaseAuth.getInstance()
+        fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-        }
-
-        fun signUpUser(context: Context) {
-            val usuario = Usuario()
+        fun signUp(usuario: Usuario, context: Context) {
             firebaseAuth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

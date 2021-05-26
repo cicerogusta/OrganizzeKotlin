@@ -1,23 +1,25 @@
 package com.example.organizzekotlin.model
 
-import android.content.Context
-import com.example.organizzekotlin.firebase.FirebaseCustom
+import com.example.organizzekotlin.firebase.FirebaseHelper
 
-class Usuario{
-
-    lateinit var idUsuario: String
-    lateinit var nome: String
-    lateinit var email: String
-    lateinit var senha: String
-    var receitaTotal: Double = 0.00
+data class Usuario(
+    var idUsuario: String? = "",
+    var nome: String = "",
+    var email: String = "",
+    var senha: String = "",
+    var receitaTotal: Double = 0.00,
     var despesaTotal: Double = 0.00
+){
 
-    class Usuario(){
-    }
+
+
+
+
+
 
     fun salvar(){
 
-        FirebaseCustom.firebaseConnection().child("usuarios").child(this.idUsuario).setValue(this)
+        FirebaseHelper.firebaseConnection().child("usuarios").child(this.idUsuario.toString()).setValue(this)
 
     }
 

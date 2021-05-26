@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.organizzekotlin.firebase.FirebaseCustom
+import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.model.Usuario
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun validarLogin() {
-        autenticacao = FirebaseCustom.firebaseAuth()
+        autenticacao = FirebaseHelper.firebaseAuth()
         autenticacao.signInWithEmailAndPassword(
             usuario.email,
             usuario.senha
