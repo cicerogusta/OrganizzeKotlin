@@ -5,6 +5,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.organizzekotlin.databinding.ActivityCadastroBinding
 import com.example.organizzekotlin.firebase.FirebaseCustom
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Usuario
@@ -13,33 +15,26 @@ import com.google.firebase.auth.*
 
 class CadastroActivity : AppCompatActivity() {
 
-    private lateinit var campoNome: EditText
-    private lateinit var campoEmail: EditText
-    private lateinit var campoSenha: EditText
-    private lateinit var buttonCadastro: Button
-    private lateinit var auth: FirebaseAuth
-    private lateinit var usuario: Usuario
 
+    private lateinit var binding: ActivityCadastroBinding
+    lateinit var usuario: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = ActivityCadastroBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cadastro)
+        setContentView(binding.root)
 
-        campoNome = findViewById(R.id.editNome)
-        campoEmail = findViewById(R.id.editEmail)
-        campoSenha = findViewById(R.id.editSenha)
-        buttonCadastro = findViewById(R.id.buttonCadastrar)
+        binding.buttonCadastrar.setOnClickListener {
 
-        buttonCadastro.setOnClickListener {
-
-            val textoNome: String = campoNome.text.toString()
-            val textoEmail: String = campoEmail.text.toString()
-            val textoSenha: String = campoSenha.text.toString()
+            val textoNome: String = binding.editNome.toString()
+            val textoEmail: String = binding.editEmail.toString()
+            val textoSenha: String = binding.editSenha.toString()
 
 
             if (textoNome.isNotEmpty()) {
                 if (textoEmail.isNotEmpty()) {
                     if (textoSenha.isNotEmpty()) {
+
                         usuario = Usuario()
                         usuario.nome = textoNome
                         usuario.email = textoEmail
@@ -63,7 +58,7 @@ class CadastroActivity : AppCompatActivity() {
 
     private fun signUpUser() {
 
-        auth = FirebaseCustom.firebaseAuth();
+        val auth: FirebaseAuth = FirebaseCustom.firebaseAuth();
         auth.createUserWithEmailAndPassword(usuario.email, usuario.senha).addOnCompleteListener(
             this
         ) {
