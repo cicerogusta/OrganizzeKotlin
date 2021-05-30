@@ -1,5 +1,6 @@
 package com.example.organizzekotlin.model
 
+import android.text.Editable
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
@@ -7,12 +8,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 
 data class Movimentacao(
-    var data: String,
-    var categoria: String,
-    var descricao: String,
-    var tipo: String,
-    var valor: Double,
-    var key: String?
+    var data: String = "",
+    var categoria: String = "",
+    var descricao: String = "",
+    var tipo: String = "",
+    var valor: Editable,
+    var key: String = ""
 ) {
 
 

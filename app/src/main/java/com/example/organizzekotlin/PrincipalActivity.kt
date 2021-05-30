@@ -1,4 +1,4 @@
-package com.example.organizzekotlin
+.dpackage com.example.organizzekotlin
 
 import android.content.Intent
 import android.os.Build
@@ -136,7 +136,7 @@ class PrincipalActivity : AppCompatActivity() {
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
         usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
         if (movimentacao.tipo == "r") {
-            receitaTotal -= movimentacao.valor
+           // receitaTotal - movimentacao.valor
             usuarioRef.child("receitaTotal").setValue(receitaTotal)
         }
         if (movimentacao.tipo.equals("d")) {

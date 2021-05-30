@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.helper.Base64Custom
+import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -40,9 +41,19 @@ class FirebaseHelper {
 
                     }
                 }
+        }
 
+        fun registraDespesa(movimentacao: Movimentacao) {
 
         }
+
+        fun recuperarEmail() = firebaseAuth().currentUser?.email
+
+
+
+
+
+
 
         fun mensagem(activity: Context){
 
