@@ -26,7 +26,7 @@ data class Usuario(
 }
 
 
-//class AdapterMovimentacao(list: List<Movimentacao>, context: Context) {
+//class com.example.organizzekotlin.adapter.AdapterMovimentacao(list: List<Movimentacao>, context: Context) {
 //
 //    var movimentacoes: List<Movimentacao> = list
 //    var context: Context = context

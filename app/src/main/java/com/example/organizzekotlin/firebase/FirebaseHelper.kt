@@ -36,6 +36,7 @@ class FirebaseHelper {
                         usuario.idUsuario = idUsuario
                         usuario.salvar()
 
+
                     } else {
                         mensagem(context)
 
@@ -43,9 +44,9 @@ class FirebaseHelper {
                 }
         }
 
-        fun registraDespesa(movimentacao: Movimentacao) {
-
-        }
+//        fun registraDespesa(movimentacao: Movimentacao) {
+//
+//        }
 
         fun recuperarEmail() = firebaseAuth().currentUser?.email
 

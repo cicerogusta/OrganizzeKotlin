@@ -1,6 +1,5 @@
 package com.example.organizzekotlin.model
 
-import android.text.Editable
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
@@ -12,7 +11,7 @@ data class Movimentacao(
     var categoria: String = "",
     var descricao: String = "",
     var tipo: String = "",
-    var valor: Editable,
+    var valor: Double = 0.0,
     var key: String = ""
 ) {
 

@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.model.Usuario
 import com.google.android.gms.tasks.OnCompleteListener
@@ -67,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 abrirTelaPrincipal()
             } else {
-                var excecao = ""
+                val excecao: String
                 try {
                     throw task.exception!!
                 } catch (e: FirebaseAuthInvalidUserException) {

@@ -19,11 +19,13 @@ class CadastroActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonCadastrar.setOnClickListener {
-            if (validarCamposCadastro()){ FirebaseHelper.signUp(getUsuario(), this) }
+            if (validarCamposCadastro()){ FirebaseHelper.signUp(getUsuario(), this)
+                finish()
+            }
         }
     }
 
-    fun getUsuario(): Usuario{
+    fun getUsuario(): Usuario {
 
         val textoNome = binding.editNome.text.toString()
         val textoEmail = binding.editEmail.text.toString()
@@ -38,7 +40,7 @@ class CadastroActivity : AppCompatActivity() {
 
        val campos = getUsuario()
 
-        var mensagem = ""
+        val mensagem: String
         when {
             campos.nome.isEmpty() -> {
                 mensagem = "preeencha o nome"

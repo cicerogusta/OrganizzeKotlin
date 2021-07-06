@@ -15,6 +15,8 @@ import com.google.firebase.database.ValueEventListener
 
 class DespesasActivity : AppCompatActivity() {
 
+   var despesaTotal: Double = 0.0
+
     lateinit var binding: ActivityDespesasBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +43,6 @@ class DespesasActivity : AppCompatActivity() {
         val movimentacao = getMovimentacao()
         movimentacao.tipo = "d"
         movimentacao.salvar(movimentacao.data)
-
         finish()
 
     }
@@ -50,7 +51,7 @@ class DespesasActivity : AppCompatActivity() {
 
         val movimentacao = getMovimentacao()
 
-        var mensagem = ""
+        val mensagem: String
         when {
             movimentacao.valor.toString().isEmpty() -> {
                 mensagem = "preeencha o valor"
@@ -79,7 +80,7 @@ class DespesasActivity : AppCompatActivity() {
 
     fun getMovimentacao(): Movimentacao {
 
-        val textoValor = binding.editValor.text
+        val textoValor = binding.editValor.text.toString().toDouble()
         val textoData = binding.editData.text.toString()
         val textoCategoria = binding.editCategoria.text.toString()
         val textoDescricao = binding.editDescricao.text.toString()
@@ -104,7 +105,7 @@ class DespesasActivity : AppCompatActivity() {
         FirebaseHelper.firebaseConnection().child("usuarios").child(idUsuario)
 
         FirebaseHelper.firebaseConnection().addValueEventListener(object : ValueEventListener {
-            var despesaTotal = 0.0
+
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -120,20 +121,6 @@ class DespesasActivity : AppCompatActivity() {
 
     }
 
-    fun atualizarDespesa() {
-
-
-        val email = FirebaseHelper.recuperarEmail().orEmpty()
-        val firebase = FirebaseHelper.firebaseConnection()
-        firebase.child("usuarios").child(email)
-
-       // val novaDespesa =  getMovimentacao().valor + getMovimentacao().valor
-
-      //  firebase.child("despesaTotal").setValue(novaDespesa)
-
-
-
-    }
 
     fun mensagemCampoVazio(mensagem: String) {
 

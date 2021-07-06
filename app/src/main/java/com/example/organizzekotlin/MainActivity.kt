@@ -3,6 +3,7 @@ package com.example.organizzekotlin
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.heinrichreimersoftware.materialintro.app.IntroActivity
@@ -59,9 +60,7 @@ class MainActivity : IntroActivity() {
     fun verificarUsuarioLogado() {
         autenticacao = FirebaseHelper.firebaseAuth()
         //autenticacao.signOut();
-        if (autenticacao.currentUser != null) {
-            abrirTelaPrincipal()
-        }
+        if (autenticacao.currentUser != null) { abrirTelaPrincipal() }
     }
 
     fun abrirTelaPrincipal(){
