@@ -16,6 +16,10 @@ class MainActivity : IntroActivity() {
         super.onCreate(savedInstanceState)
       //  setContentView(R.layout.activity_main)
 
+
+        isButtonBackVisible = false
+        isButtonNextVisible = false
+
         addSlide(FragmentSlide.Builder()
             .background(android.R.color.white)
             .fragment(R.layout.intro_1)
@@ -39,7 +43,10 @@ class MainActivity : IntroActivity() {
         addSlide(FragmentSlide.Builder()
             .background(android.R.color.white)
             .fragment(R.layout.intro_cadastro)
+            .canGoForward(false)
             .build())
+
+
 
 
     }

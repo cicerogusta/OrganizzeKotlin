@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.model.Usuario
+import com.example.organizzekotlin.util.isEmail
+import com.example.organizzekotlin.util.isPassword
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -38,22 +40,23 @@ class CadastroActivity : AppCompatActivity() {
 
     fun validarCamposCadastro(): Boolean {
 
-       val campos = getUsuario()
+       val usuario = getUsuario()
 
         val mensagem: String
         when {
-            campos.nome.isEmpty() -> {
-                mensagem = "preeencha o nome"
-                mensagemCampoVazio(mensagem)
+            usuario.nome.isEmpty() -> {
+                mensagem = "nome inválido!"
+                binding.editNome.error = mensagem
 
             }
-            campos.email.isEmpty() -> {
-                mensagem = "preencha o e-mail"
-                mensagemCampoVazio(mensagem)
+            usuario.email.isEmpty() || !usuario.email.isEmail()-> {
+                mensagem = "email inválido!"
+                binding.editEmail.error = mensagem
+
             }
-            campos.senha.isEmpty() -> {
-                mensagem = "preencha a senha"
-                mensagemCampoVazio(mensagem)
+            usuario.senha.isEmpty() || usuario.senha.isPassword().toString().length < 6-> {
+                mensagem = "Sua senha deve conter ao menos 6 variando letra e numero"
+                binding.editSenha.error = mensagem
             }
             else -> {
                 return true
@@ -66,14 +69,8 @@ class CadastroActivity : AppCompatActivity() {
 
 
 
-    fun mensagemCampoVazio(mensagem:String){
 
-        Toast.makeText(
-            this@CadastroActivity,
-            mensagem,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+
 }
 
 
