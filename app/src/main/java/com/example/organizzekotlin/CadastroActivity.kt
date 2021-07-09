@@ -55,7 +55,7 @@ class CadastroActivity : AppCompatActivity() {
                 binding.editEmail.error = mensagem
 
             }
-            usuario.senha.isEmpty() || usuario.senha == " " -> {
+            usuario.senha.isEmpty() || usuario.senha == " " || usuario.senha.length < 6 -> {
                 mensagem = "Digite uma senha mais forte com letras e numeros"
                 binding.editSenha.error = mensagem
             }
