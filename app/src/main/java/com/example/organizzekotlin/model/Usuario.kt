@@ -1,6 +1,6 @@
 package com.example.organizzekotlin.model
 
-import com.example.organizzekotlin.firebase.FirebaseHelper
+import com.example.organizzekotlin.firebase.firebaseConnection
 
 data class Usuario(
     var idUsuario: String? = "",
@@ -9,17 +9,11 @@ data class Usuario(
     var senha: String = "",
     var receitaTotal: Double = 0.00,
     var despesaTotal: Double = 0.00
-){
+) {
 
+    fun salvar() {
 
-
-
-
-
-
-    fun salvar(){
-
-        FirebaseHelper.firebaseConnection().child("usuarios").child(this.idUsuario.toString()).setValue(this)
+        firebaseConnection().child("usuarios").child(this.idUsuario.toString()).setValue(this)
 
     }
 

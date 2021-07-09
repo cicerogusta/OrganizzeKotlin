@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper
+import com.example.organizzekotlin.firebase.firebaseAuth
+import com.example.organizzekotlin.firebase.firebaseConnection
+import com.example.organizzekotlin.firebase.recuperarEmail
+
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
@@ -83,20 +86,20 @@ class PrincipalActivity : AppCompatActivity() {
 
     fun atualizarSaldo() {
 
-        val emailUsuario = FirebaseHelper.recuperarEmail().toString()
+        val emailUsuario = recuperarEmail().toString()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario)
-        FirebaseHelper.firebaseConnection().child("usuarios").child(idUsuario)
+        firebaseConnection().child("usuarios").child(idUsuario)
         if (movimentacao != null) {
             if (movimentacao.tipo == "r")
                 {
                     receitaTotal -= movimentacao.valor
-                    FirebaseHelper.firebaseConnection().child("receitaTotal").setValue(receitaTotal)
+                    firebaseConnection().child("receitaTotal").setValue(receitaTotal)
                 }
         }
         if (movimentacao != null) {
             if (movimentacao.tipo == "d") {
                 despesaTotal -= movimentacao.valor
-                FirebaseHelper.firebaseConnection().child("despesaTotal").setValue(despesaTotal)
+               firebaseConnection().child("despesaTotal").setValue(despesaTotal)
             }
         }
     }
@@ -161,9 +164,9 @@ class PrincipalActivity : AppCompatActivity() {
 
     fun recuperarMovimentacoes(mesAnoSelecionado: String) {
 
-        val emailUsuario = FirebaseHelper.recuperarEmail()
+        val emailUsuario = recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        val movimentacaoRef = FirebaseHelper.firebaseConnection()
+        val movimentacaoRef = firebaseConnection()
             .child("movimentacao")
             .child(idUsuario)
             .child(mesAnoSelecionado)
@@ -193,9 +196,9 @@ class PrincipalActivity : AppCompatActivity() {
 
     fun recuperarResumo() {
 
-        val emailUsuario = FirebaseHelper.recuperarEmail()
+        val emailUsuario = recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        val autenticacao = FirebaseHelper.firebaseConnection().child("usuarios").child(idUsuario)
+        val autenticacao = firebaseConnection().child("usuarios").child(idUsuario)
 
         autenticacao.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -232,7 +235,7 @@ class PrincipalActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menuSair -> {
-                val autenticacao = FirebaseHelper.firebaseAuth()
+                val autenticacao = firebaseAuth()
                 autenticacao.signOut()
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()

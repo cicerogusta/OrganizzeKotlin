@@ -1,6 +1,8 @@
 package com.example.organizzekotlin.model
 
-import com.example.organizzekotlin.firebase.FirebaseHelper
+
+import com.example.organizzekotlin.firebase.firebaseAuth
+import com.example.organizzekotlin.firebase.firebaseConnection
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
 import com.google.firebase.auth.FirebaseAuth
@@ -18,11 +20,11 @@ data class Movimentacao(
 
     fun salvar(dataEscolhida: String) {
 
-        val autentication: FirebaseAuth = FirebaseHelper.firebaseAuth()
+        val autentication: FirebaseAuth = firebaseAuth()
         val idUsuario: String = Base64Custom.codificarBase64(autentication.currentUser?.email.toString())
         val mesAno: String = DateCustom.mesAnoDataEscolhida(dataEscolhida)
 
-        val firebase: DatabaseReference = FirebaseHelper.firebaseConnection()
+        val firebase: DatabaseReference = firebaseConnection()
         firebase.child("movimentacao")
             .child(idUsuario)
             .child(mesAno)

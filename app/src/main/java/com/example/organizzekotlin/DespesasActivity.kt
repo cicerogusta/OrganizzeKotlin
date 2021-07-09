@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityDespesasBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper
+import com.example.organizzekotlin.firebase.firebaseConnection
+import com.example.organizzekotlin.firebase.recuperarEmail
+
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
 import com.example.organizzekotlin.model.Movimentacao
@@ -100,11 +102,11 @@ class DespesasActivity : AppCompatActivity() {
 
     fun exibirDespesaTotal() {
 
-        val emailUsuario = FirebaseHelper.recuperarEmail()
+        val emailUsuario = recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        FirebaseHelper.firebaseConnection().child("usuarios").child(idUsuario)
+       firebaseConnection().child("usuarios").child(idUsuario)
 
-        FirebaseHelper.firebaseConnection().addValueEventListener(object : ValueEventListener {
+        firebaseConnection().addValueEventListener(object : ValueEventListener {
 
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
