@@ -12,19 +12,6 @@ fun firebaseConnection(): DatabaseReference = FirebaseDatabase.getInstance().ref
 
 fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-fun signUp(usuario: Usuario) {
-    firebaseAuth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-
-                val idUsuario: String = Base64Custom.codificarBase64(usuario.email)
-                usuario.idUsuario = idUsuario
-                usuario.salvar()
-
-
-            }
-        }
-}
 
 
 

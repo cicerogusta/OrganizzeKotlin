@@ -1,10 +1,10 @@
 package com.example.organizzekotlin
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
-import com.example.organizzekotlin.firebase.signUp
+import com.example.organizzekotlin.firebase.firebaseAuth
+import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Usuario
 import com.example.organizzekotlin.util.isEmail
 
@@ -22,6 +22,7 @@ class CadastroActivity : AppCompatActivity() {
         binding.buttonCadastrar.setOnClickListener {
             if (validarCamposCadastro()) {
                 signUp(getUsuario())
+                binding.loading = true
                 finish()
             }
         }
@@ -68,19 +69,26 @@ class CadastroActivity : AppCompatActivity() {
 
     }
 
-    fun dialogError() {
 
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Usuario não cadastrado")
-        builder.setMessage("Verifique se já não foi criado um usuário com esses dados")
+    fun signUp(usuario: Usuario) {
+        binding.loading = true
+        firebaseAuth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
 
-        builder.show()
+                    val idUsuario: String = Base64Custom.codificarBase64(usuario.email)
+                    usuario.idUsuario = idUsuario
+                    usuario.salvar()
+
+
+                }
+                binding.loading = false
+            }
     }
 
 
 
-
-    }
+}
 
 
 
