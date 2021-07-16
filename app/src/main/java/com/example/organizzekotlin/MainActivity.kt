@@ -1,11 +1,11 @@
 package com.example.organizzekotlin
 
+
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.example.organizzekotlin.firebase.firebaseAuth
-
-
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
 import com.google.firebase.auth.FirebaseAuth
 import com.heinrichreimersoftware.materialintro.app.IntroActivity
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide
@@ -13,65 +13,70 @@ import com.heinrichreimersoftware.materialintro.slide.FragmentSlide
 class MainActivity : IntroActivity() {
     private lateinit var autenticacao: FirebaseAuth
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-      //  setContentView(R.layout.activity_main)
+        //  setContentView(R.layout.activity_main)
 
 
         isButtonBackVisible = false
         isButtonNextVisible = false
 
-        addSlide(FragmentSlide.Builder()
-            .background(android.R.color.white)
-            .fragment(R.layout.intro_1)
-            .build())
+        var list = listOf(
+            R.layout.intro_1,
+            R.layout.intro_2,
+            R.layout.intro_3,
+            R.layout.intro_4,
+            R.layout.intro_cadastro
+        )
+        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
 
-        addSlide(FragmentSlide.Builder()
-            .background(android.R.color.white)
-            .fragment(R.layout.intro_2)
-            .build())
+        val jumpSlides = sh.getBoolean("jumpSlides", false)
+        if (jumpSlides) {
+            list = listOf(
+                R.layout.intro_cadastro
+            )
+        }
 
-        addSlide(FragmentSlide.Builder()
-            .background(android.R.color.white)
-            .fragment(R.layout.intro_3)
-            .build())
-
-        addSlide(FragmentSlide.Builder()
-            .background(android.R.color.white)
-            .fragment(R.layout.intro_4)
-            .build())
-
-        addSlide(FragmentSlide.Builder()
-            .background(android.R.color.white)
-            .fragment(R.layout.intro_cadastro)
-            .canGoForward(false)
-            .build())
+        list.forEach {
+            val isLast = list.last() == it
+            addSlide(
+                FragmentSlide.Builder()
+                    .background(android.R.color.white)
+                    .fragment(it)
+                    .canGoForward(!isLast)
+                    .build()
+            )
 
 
+        }
 
 
     }
+
 
     override fun onStart() {
         super.onStart()
         verificarUsuarioLogado()
     }
 
-    fun abrirTelaEntrar(view: View){
+    fun verificarUsuarioLogado() {
+
+        autenticacao = firebaseAuth()
+        if (autenticacao.currentUser != null) {
+            abrirTelaPrincipal()
+        }
+    }
+
+    fun abrirTelaEntrar(view: View) {
         startActivity(Intent(this, LoginActivity::class.java))
     }
 
-    fun abrirTelaCadastro(view: View){
+    fun abrirTelaCadastro(view: View) {
         startActivity(Intent(this, CadastroActivity::class.java))
     }
 
-    fun verificarUsuarioLogado() {
-        autenticacao = firebaseAuth()
-        //autenticacao.signOut();
-        if (autenticacao.currentUser != null) { abrirTelaPrincipal() }
-    }
-
-    fun abrirTelaPrincipal(){
+    fun abrirTelaPrincipal() {
         startActivity(Intent(this, PrincipalActivity::class.java))
     }
 

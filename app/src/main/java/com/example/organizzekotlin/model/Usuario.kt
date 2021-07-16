@@ -1,6 +1,6 @@
 package com.example.organizzekotlin.model
 
-import com.example.organizzekotlin.firebase.firebaseConnection
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
 
 data class Usuario(
     var idUsuario: String? = "",

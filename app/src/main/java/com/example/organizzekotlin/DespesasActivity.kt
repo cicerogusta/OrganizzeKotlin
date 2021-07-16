@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityDespesasBinding
-import com.example.organizzekotlin.firebase.firebaseConnection
-import com.example.organizzekotlin.firebase.recuperarEmail
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
+import com.example.organizzekotlin.firebase.FirebaseHelper.recuperarEmail
 
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener
 
 class DespesasActivity : AppCompatActivity() {
 
-   var despesaTotal: Double = 0.0
+    var despesaTotal: Double = 0.0
 
     lateinit var binding: ActivityDespesasBinding
 
@@ -26,7 +26,7 @@ class DespesasActivity : AppCompatActivity() {
         binding = ActivityDespesasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.editData.setText(DateCustom.dataAtual())
+        binding.editDataDespesa.setText(DateCustom.dataAtual())
         exibirDespesaTotal()
 
         binding.fabSalvar.setOnClickListener {
@@ -83,9 +83,9 @@ class DespesasActivity : AppCompatActivity() {
     fun getMovimentacao(): Movimentacao {
 
         val textoValor = binding.editValor.text.toString().toDouble()
-        val textoData = binding.editData.text.toString()
-        val textoCategoria = binding.editCategoria.text.toString()
-        val textoDescricao = binding.editDescricao.text.toString()
+        val textoData = binding.editDataDespesa.text.toString()
+        val textoCategoria = binding.editCategoriaDespesa.text.toString()
+        val textoDescricao = binding.editDescricaoDespesa.text.toString()
 
 
 
@@ -104,7 +104,7 @@ class DespesasActivity : AppCompatActivity() {
 
         val emailUsuario = recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-       firebaseConnection().child("usuarios").child(idUsuario)
+        firebaseConnection().child("usuarios").child(idUsuario)
 
         firebaseConnection().addValueEventListener(object : ValueEventListener {
 

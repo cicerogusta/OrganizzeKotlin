@@ -1,9 +1,9 @@
 package com.example.organizzekotlin
 
 
-import com.example.organizzekotlin.adapter.AdapterMovimentacao
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -11,14 +11,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.organizzekotlin.adapter.AdapterMovimentacao
 import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
-import com.example.organizzekotlin.firebase.firebaseAuth
-import com.example.organizzekotlin.firebase.firebaseConnection
-import com.example.organizzekotlin.firebase.recuperarEmail
-
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
+import com.example.organizzekotlin.firebase.FirebaseHelper.recuperarEmail
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
@@ -47,6 +46,11 @@ class PrincipalActivity : AppCompatActivity() {
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+
+        sh.edit().putBoolean("jumpSlides", true).apply()
+
+
         //Configurar RecyclerView
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         val recyclerView = binding.recyclerMovimentos
@@ -60,29 +64,31 @@ class PrincipalActivity : AppCompatActivity() {
 
         //Configurar adapter
         adapterMovmentacao = AdapterMovimentacao(movimentacoes, this)
+        binding.recyclerMovimentos.adapter = adapterMovmentacao
+
 
         binding.menuDespesa.setOnClickListener { chamarDespesa() }
 
 
     }
 
-    fun swipe() {
-
-        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                TODO("Not yet implemented")
-            }
-
-        }
-    }
+//    fun swipe() {
+//
+//        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+//            override fun onMove(
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                target: RecyclerView.ViewHolder
+//            ): Boolean {
+//                TODO("Not yet implemented")
+//            }
+//
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        }
+//    }
 
     fun atualizarSaldo() {
 
@@ -90,16 +96,15 @@ class PrincipalActivity : AppCompatActivity() {
         val idUsuario = Base64Custom.codificarBase64(emailUsuario)
         firebaseConnection().child("usuarios").child(idUsuario)
         if (movimentacao != null) {
-            if (movimentacao.tipo == "r")
-                {
-                    receitaTotal -= movimentacao.valor
-                    firebaseConnection().child("receitaTotal").setValue(receitaTotal)
-                }
+            if (movimentacao.tipo == "r") {
+                receitaTotal -= movimentacao.valor
+                firebaseConnection().child("receitaTotal").setValue(receitaTotal)
+            }
         }
         if (movimentacao != null) {
             if (movimentacao.tipo == "d") {
                 despesaTotal -= movimentacao.valor
-               firebaseConnection().child("despesaTotal").setValue(despesaTotal)
+                firebaseConnection().child("despesaTotal").setValue(despesaTotal)
             }
         }
     }
@@ -129,7 +134,7 @@ class PrincipalActivity : AppCompatActivity() {
 
             })
         alertDialog.create()?.show()
-        adapterMovmentacao?.notifyDataSetChanged()
+        adapterMovmentacao.notifyDataSetChanged()
     }
 
 
@@ -186,7 +191,7 @@ class PrincipalActivity : AppCompatActivity() {
                     movimentacoes.add(movimentacao)
 
                 }
-                updateLista(movimentacoes)
+                adapterMovmentacao.notifyDataSetChanged()
             }
 
         })
@@ -244,17 +249,6 @@ class PrincipalActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
-    fun updateLista(movimentacoes: List<Movimentacao>) {
-
-
-       adapterMovmentacao = AdapterMovimentacao(movimentacoes, this)
-
-        binding.recyclerMovimentos.adapter = adapterMovmentacao
-
-
-
-    }
 
     fun chamarDespesa() {
         startActivity(Intent(this, DespesasActivity::class.java))

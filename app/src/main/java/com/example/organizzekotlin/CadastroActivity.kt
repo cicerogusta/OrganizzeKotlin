@@ -1,12 +1,13 @@
 package com.example.organizzekotlin
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
-import com.example.organizzekotlin.firebase.firebaseAuth
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Usuario
-import com.example.organizzekotlin.util.isEmail
+import com.example.organizzekotlin.util.Validation.isEmail
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -22,7 +23,7 @@ class CadastroActivity : AppCompatActivity() {
         binding.buttonCadastrar.setOnClickListener {
             if (validarCamposCadastro()) {
                 signUp(getUsuario())
-                binding.loading = true
+
                 finish()
             }
         }
@@ -81,41 +82,24 @@ class CadastroActivity : AppCompatActivity() {
                     usuario.salvar()
 
 
+                } else {
+                    alertDialog()
                 }
                 binding.loading = false
             }
     }
 
+    fun alertDialog() {
+
+        val builder: AlertDialog.Builder = this.let {
+            AlertDialog.Builder(it)
+        }
+
+        builder.setMessage("Verifique se não há usuário já cadastrado com esses dados!")
+            .setTitle("Não foi possível cadastrar!")
+
+        builder.create()
+    }
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityLoginBinding
-import com.example.organizzekotlin.firebase.firebaseAuth
+import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
 import com.example.organizzekotlin.model.Usuario
 
 abstract class LoginActivity : AppCompatActivity() {
@@ -21,7 +21,11 @@ abstract class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        botaoEntrar.setOnClickListener { if (verificaCamposLogin()){login()} }
+        botaoEntrar.setOnClickListener {
+            if (verificaCamposLogin()) {
+                login()
+            }
+        }
 
     }
 
@@ -54,15 +58,16 @@ abstract class LoginActivity : AppCompatActivity() {
     fun login() {
 
         val usuario = userLogin()
-        firebaseAuth().signInWithEmailAndPassword(usuario.email, usuario.senha).addOnSuccessListener {
+        firebaseAuth().signInWithEmailAndPassword(usuario.email, usuario.senha)
+            .addOnSuccessListener {
+                abrirTelaPrincipal()
 
-        }.addOnFailureListener {  }
+            }
 
     }
 
     fun abrirTelaPrincipal() {
         startActivity(Intent(this, PrincipalActivity::class.java))
-        finish()
     }
 
 }
