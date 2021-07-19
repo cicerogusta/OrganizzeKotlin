@@ -68,7 +68,7 @@ class MainActivity : IntroActivity() {
         }
     }
 
-    fun abrirTelaEntrar(view: View) {
+    fun abrirTelaLogin(view: View) {
         startActivity(Intent(this, LoginActivity::class.java))
     }
 

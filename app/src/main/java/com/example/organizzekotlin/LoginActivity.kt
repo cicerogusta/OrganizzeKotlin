@@ -1,73 +1,63 @@
 package com.example.organizzekotlin
 
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityLoginBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
-import com.example.organizzekotlin.model.Usuario
+import com.example.organizzekotlin.firebase.FirebaseHelper
 
-abstract class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
+    lateinit var binding: ActivityLoginBinding
 
-    val campoEmail = binding.editEmailLogin
-    val campoSenha = binding.editSenhaLogin
-    val botaoEntrar = binding.buttonEntrar
-
-    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        botaoEntrar.setOnClickListener {
-            if (verificaCamposLogin()) {
-                login()
-            }
+
+        binding.buttonEntrar.setOnClickListener {
+            login()
         }
-
-    }
-
-    fun userLogin(): Usuario {
-
-        val textoEmail = campoEmail.text.toString()
-        val textoSenha = campoSenha.text.toString()
-        return Usuario(null, textoEmail, textoSenha)
-    }
-
-    fun verificaCamposLogin(): Boolean {
-
-        when {
-
-            userLogin().email.isEmpty() -> {
-                campoEmail.error = "email precisa ser preenchido!"
-            }
-
-            userLogin().senha.isEmpty() -> {
-                campoSenha.error = "senha precisa ser preenchida!"
-            }
-            else -> {
-                return true
-            }
-        }
-        return false
-
     }
 
     fun login() {
 
-        val usuario = userLogin()
-        firebaseAuth().signInWithEmailAndPassword(usuario.email, usuario.senha)
-            .addOnSuccessListener {
-                abrirTelaPrincipal()
+        val textoEmail = binding.editEmailLogin.text.toString()
+        val textoSenha = binding.editSenhaLogin.text.toString()
+
+        val mensagem: String
+
+        when {
+            textoEmail.isEmpty()  -> {
+                mensagem = "Preencha o campo de email"
+                binding.editEmailLogin.error = mensagem
 
             }
+            textoSenha.isEmpty() -> {
+                mensagem = "Preencha o campo senha"
+                binding.editSenhaLogin.error = mensagem
+            }
 
+            else -> {
+                FirebaseHelper.firebaseAuth().signInWithEmailAndPassword(textoEmail, textoSenha)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            abrirTelaPrincipal()
+
+                        }else {
+                            binding.editEmailLogin.error = "Não existe usuário com este email cadastrado!"
+                        }
+                    }
+
+            }
+        }
     }
 
     fun abrirTelaPrincipal() {
         startActivity(Intent(this, PrincipalActivity::class.java))
+        finish()
     }
+
 
 }

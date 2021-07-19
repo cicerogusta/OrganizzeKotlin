@@ -4,7 +4,7 @@ import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
 
 data class Usuario(
     var idUsuario: String? = "",
-    var nome: String = "",
+    var nome: String? = "",
     var email: String = "",
     var senha: String = "",
     var receitaTotal: Double = 0.00,

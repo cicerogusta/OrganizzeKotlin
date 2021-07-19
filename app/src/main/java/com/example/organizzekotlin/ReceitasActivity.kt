@@ -2,11 +2,13 @@ package com.example.organizzekotlin
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
 import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
 import com.example.organizzekotlin.databinding.ActivityReceitasBinding
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
+import com.example.organizzekotlin.helper.DateCustom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
 import com.google.firebase.database.DataSnapshot
@@ -16,7 +18,7 @@ import com.google.firebase.database.ValueEventListener
 class ReceitasActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityReceitasBinding
-    var receitaTotal = 0.00
+    var receitaTotal = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,19 +26,25 @@ class ReceitasActivity : AppCompatActivity() {
         binding = ActivityReceitasBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_receitas)
 
+        binding.editData.setText(DateCustom.dataAtual())
+        exibirReceitaTotal()
+
+        exibirReceitaTotal()
+        binding.fabSalvar.setOnClickListener { if (validarCamposReceita()) { salvarDespesa() }}
+
 
     }
 
     fun salvarDespesa() {
 
         val movimentacao = getMovimentacao()
-        movimentacao.tipo = "d"
+        movimentacao.tipo = "r"
         movimentacao.salvar(movimentacao.data)
         finish()
 
     }
 
-    fun validarCamposDespesa(): Boolean {
+    fun validarCamposReceita(): Boolean {
 
         val movimentacao = getMovimentacao()
 
@@ -44,20 +52,20 @@ class ReceitasActivity : AppCompatActivity() {
         when {
             movimentacao.valor.toString().isEmpty() -> {
                 mensagem = "preeencha o valor"
-//                mensagemCampoVazio(mensagem)
+                mensagemCampoVazio(mensagem)
 
             }
             movimentacao.data.isEmpty() -> {
                 mensagem = "preencha a data"
-//                mensagemCampoVazio(mensagem)
+                mensagemCampoVazio(mensagem)
             }
             movimentacao.categoria.isEmpty() -> {
                 mensagem = "preencha a categoria"
-//                mensagemCampoVazio(mensagem)
+                mensagemCampoVazio(mensagem)
             }
             movimentacao.descricao.isEmpty() -> {
                 mensagem = "preencha a descrição"
-//                mensagemCampoVazio(mensagem)
+                mensagemCampoVazio(mensagem)
             }
             else -> {
                 return true
@@ -107,6 +115,18 @@ class ReceitasActivity : AppCompatActivity() {
             }
 
         })
+
+    }
+
+    fun mensagemCampoVazio(mensagem: String) {
+
+
+        Toast.makeText(
+            this,
+            mensagem,
+            Toast.LENGTH_SHORT
+        ).show()
+
 
     }
 }

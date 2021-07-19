@@ -119,20 +119,20 @@ class PrincipalActivity : AppCompatActivity() {
         alertDialog.setTitle("Excluir Movimentação da Conta")
         alertDialog.setMessage("Você tem certeza que deseja realmente excluir essa movimentação de sua conta?")
         alertDialog.setCancelable(false)
-        alertDialog.setPositiveButton("Confirmar",
-            DialogInterface.OnClickListener { dialog, which ->
+        alertDialog.setPositiveButton("Confirmar"
+        ) { dialog, which ->
 
-                atualizarSaldo()
-            })
-        alertDialog.setNegativeButton("Cancelar",
-            DialogInterface.OnClickListener { dialog, which ->
-                Toast.makeText(
-                    this@PrincipalActivity,
-                    "Cancelado",
-                    Toast.LENGTH_SHORT
-                ).show()
+            atualizarSaldo()
+        }
+        alertDialog.setNegativeButton("Cancelar"
+        ) { dialog, which ->
+            Toast.makeText(
+                this@PrincipalActivity,
+                "Cancelado",
+                Toast.LENGTH_SHORT
+            ).show()
 
-            })
+        }
         alertDialog.create()?.show()
         adapterMovmentacao.notifyDataSetChanged()
     }

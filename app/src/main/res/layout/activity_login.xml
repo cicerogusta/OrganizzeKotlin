@@ -7,6 +7,10 @@
     <data>
         <import type="android.view.View"/>
         <variable
+            name="loading"
+            type="boolean" />
+
+        <variable
             name="login"
             type="com.example.organizzekotlin.LoginActivity" />
     </data>
@@ -79,6 +83,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
+
+        <include layout="@layout/loading_screen"
+            android:visibility="@{loading}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
