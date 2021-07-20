@@ -4,11 +4,11 @@ package com.example.organizzekotlin
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,49 +46,25 @@ class PrincipalActivity : AppCompatActivity() {
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
-
-        sh.edit().putBoolean("jumpSlides", true).apply()
-
-
         //Configurar RecyclerView
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         val recyclerView = binding.recyclerMovimentos
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
 
+        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+
+        sh.edit().putBoolean("jumpSlides", true).apply()
 
         recuperarResumo()
         configuraCalendarView()
 
 
-        //Configurar adapter
-        adapterMovmentacao = AdapterMovimentacao(movimentacoes, this)
-        binding.recyclerMovimentos.adapter = adapterMovmentacao
-
-
-        binding.menuDespesa.setOnClickListener { chamarDespesa() }
+        binding.menuDespesa.setOnClickListener { abrirActivityDespesa() }
+        binding.menuReceita.setOnClickListener { abrirActivityReceita() }
 
 
     }
 
-//    fun swipe() {
-//
-//        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean {
-//                TODO("Not yet implemented")
-//            }
-//
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                TODO("Not yet implemented")
-//            }
-//
-//        }
-//    }
 
     fun atualizarSaldo() {
 
@@ -110,7 +86,7 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun excluirMovimentacao(viewHolder: RecyclerView.ViewHolder) {
+    fun excluirMovimentacao(view: View) {
 
 
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -119,12 +95,15 @@ class PrincipalActivity : AppCompatActivity() {
         alertDialog.setTitle("Excluir Movimentação da Conta")
         alertDialog.setMessage("Você tem certeza que deseja realmente excluir essa movimentação de sua conta?")
         alertDialog.setCancelable(false)
-        alertDialog.setPositiveButton("Confirmar"
+        alertDialog.setPositiveButton(
+            "Confirmar"
         ) { dialog, which ->
 
+            firebaseConnection().child("movimentacao").child(mesAnoSelecionado).removeValue()
             atualizarSaldo()
         }
-        alertDialog.setNegativeButton("Cancelar"
+        alertDialog.setNegativeButton(
+            "Cancelar"
         ) { dialog, which ->
             Toast.makeText(
                 this@PrincipalActivity,
@@ -158,7 +137,7 @@ class PrincipalActivity : AppCompatActivity() {
         var mesSelecionado = String.format("%02d", binding.calendarView.currentDate.month)
         mesAnoSelecionado = mesSelecionado + "" + binding.calendarView.currentDate.year
         binding.calendarView.setOnMonthChangedListener { widget, date ->
-            mesSelecionado = String.format("%02d", date.month)
+            mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
             recuperarMovimentacoes(mesAnoSelecionado)
 
@@ -191,7 +170,7 @@ class PrincipalActivity : AppCompatActivity() {
                     movimentacoes.add(movimentacao)
 
                 }
-                adapterMovmentacao.notifyDataSetChanged()
+                cofiguraAdapter(movimentacoes)
             }
 
         })
@@ -250,8 +229,22 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun chamarDespesa() {
+    fun cofiguraAdapter(movimentacoes: List<Movimentacao>) {
+
+
+        adapterMovmentacao = AdapterMovimentacao(movimentacoes, this)
+
+        binding.recyclerMovimentos.adapter = adapterMovmentacao
+
+
+    }
+
+    fun abrirActivityDespesa() {
         startActivity(Intent(this, DespesasActivity::class.java))
+    }
+
+    fun abrirActivityReceita() {
+        startActivity(Intent(this, ReceitasActivity::class.java))
     }
 
 

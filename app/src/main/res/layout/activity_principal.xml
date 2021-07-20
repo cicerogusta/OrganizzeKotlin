@@ -90,7 +90,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/calendarView"
-            tools:listitem="@layout/adapter_movimentacao"
+            tools:listitem="@layout/row_movimentacao"
             tools:itemCount="30"/>
 
         <com.github.clans.fab.FloatingActionMenu

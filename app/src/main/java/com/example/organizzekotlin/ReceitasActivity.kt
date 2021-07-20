@@ -1,10 +1,8 @@
 package com.example.organizzekotlin
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.organizzekotlin.databinding.ActivityCadastroBinding
-import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
+import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityReceitasBinding
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
@@ -13,6 +11,7 @@ import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 
 class ReceitasActivity : AppCompatActivity() {
@@ -24,18 +23,22 @@ class ReceitasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReceitasBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_receitas)
+        setContentView(binding.root)
 
-        binding.editData.setText(DateCustom.dataAtual())
+        binding.editDataReceita.setText(DateCustom.dataAtual())
         exibirReceitaTotal()
 
         exibirReceitaTotal()
-        binding.fabSalvar.setOnClickListener { if (validarCamposReceita()) { salvarDespesa() }}
+        binding.fabSalvar.setOnClickListener {
+            if (validarCamposReceita()) {
+                salvarReceita()
+            }
+        }
 
 
     }
 
-    fun salvarDespesa() {
+    fun salvarReceita() {
 
         val movimentacao = getMovimentacao()
         movimentacao.tipo = "r"
@@ -78,7 +81,7 @@ class ReceitasActivity : AppCompatActivity() {
     fun getMovimentacao(): Movimentacao {
 
         val textoValor = binding.editValor.text.toString().toDouble()
-        val textoData = binding.editData.text.toString()
+        val textoData = binding.editDataReceita.text.toString()
         val textoCategoria = binding.editCategoria.text.toString()
         val textoDescricao = binding.editDescricao.text.toString()
 
@@ -116,6 +119,24 @@ class ReceitasActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    fun recuperarReceitaTotal() {
+        val emailUsuario: String =
+            FirebaseHelper.recuperarEmail().toString()
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario)
+        val usuarioRef: DatabaseReference =
+            FirebaseHelper.firebaseConnection().child("usuarios").child(idUsuario)
+        usuarioRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val usuario = dataSnapshot.getValue(Usuario::class.java)
+                if (usuario != null) {
+                    receitaTotal = usuario.receitaTotal
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
     }
 
     fun mensagemCampoVazio(mensagem: String) {

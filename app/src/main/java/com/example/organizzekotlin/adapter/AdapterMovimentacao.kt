@@ -17,7 +17,7 @@ class AdapterMovimentacao(
     RecyclerView.Adapter<AdapterMovimentacao.MyViewHolder?>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemLista = LayoutInflater.from(parent.context)
-            .inflate(R.layout.adapter_movimentacao, parent, false)
+            .inflate(R.layout.row_movimentacao, parent, false)
         return MyViewHolder(itemLista)
     }
 
@@ -40,9 +40,9 @@ class AdapterMovimentacao(
 
     inner class MyViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var titulo: TextView = itemView.findViewById(R.id.textAdapterTitulo)
-        var valor: TextView = itemView.findViewById(R.id.textAdapterValor)
-        var categoria: TextView = itemView.findViewById(R.id.textAdapterCategoria)
+        var titulo: TextView = itemView.findViewById(R.id.title1)
+        var valor: TextView = itemView.findViewById(R.id.value)
+        var categoria: TextView = itemView.findViewById(R.id.subtitle)
 
     }
 
