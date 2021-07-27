@@ -13,7 +13,7 @@ data class Usuario(
 
     fun salvar() {
 
-        firebaseConnection().child("usuarios").child(this.idUsuario.toString()).setValue(this)
+        firebaseConnection().child("usuarios").child(this.idUsuario.orEmpty()).setValue(this)
 
     }
 

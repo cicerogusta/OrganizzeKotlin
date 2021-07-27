@@ -1,140 +1,131 @@
 package com.example.organizzekotlin
 
 import android.os.Bundle
+import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.organizzekotlin.databinding.ActivityCadastroBinding
 import com.example.organizzekotlin.databinding.ActivityDespesasBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
-import com.example.organizzekotlin.firebase.FirebaseHelper.recuperarEmail
-
+import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
+import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 
 class DespesasActivity : AppCompatActivity() {
 
-    var despesaTotal: Double = 0.0
-
+    private lateinit var campoData: EditText
+    private lateinit var campoCategoria: EditText
+    private lateinit var campoDescricao: EditText
+    private lateinit var campoValor: EditText
+    private lateinit var movimentacao: Movimentacao
+    private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
+    private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
+    private var despesaTotal: Double = 0.0
     lateinit var binding: ActivityDespesasBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDespesasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.editDataDespesa.setText(DateCustom.dataAtual())
-        exibirDespesaTotal()
+        campoData = binding.editDataDespesa
+        campoCategoria = binding.editCategoriaDespesa
+        campoDescricao = binding.editDescricaoDespesa
+        campoValor = binding.editValor
 
-        binding.fabSalvar.setOnClickListener {
 
-            if (validarCamposDespesa()) {
 
-                salvarDespesa()
-            }
 
-        }
+        //Preenche o campo data com a date atual
+        campoData.setText(DateCustom.dataAtual())
+        recuperarDespesaTotal()
+
+        binding.fabSalvarDespesa.setOnClickListener { if (validarCamposDespesa()) salvarDespesa() }
+
+
+
+
     }
-
 
     fun salvarDespesa() {
 
-        val movimentacao = getMovimentacao()
-        movimentacao.tipo = "d"
-        movimentacao.salvar(movimentacao.data)
-        finish()
+            movimentacao = Movimentacao()
+            val data: String = campoData.getText().toString()
+            val valorRecuperado = campoValor.text.toString().toDouble()
+            movimentacao.valor = valorRecuperado
+            movimentacao.categoria = campoCategoria.getText().toString()
+            movimentacao.descricao = campoDescricao.getText().toString()
+            movimentacao.data = data
+            movimentacao.tipo = "d"
+            val despesaAtualizada = despesaTotal + valorRecuperado
+            atualizarDespesa(despesaAtualizada)
+            movimentacao.salvar(data)
+            finish()
 
     }
 
     fun validarCamposDespesa(): Boolean {
+        val textoValor = campoValor.text.toString()
+        val textoData: String = campoData.getText().toString()
+        val textoCategoria: String = campoCategoria.getText().toString()
+        val textoDescricao: String = campoDescricao.getText().toString()
 
-        val movimentacao = getMovimentacao()
-
-        val mensagem: String
         when {
-            movimentacao.valor.toString().isEmpty() -> {
-                mensagem = "preeencha o valor"
-                mensagemCampoVazio(mensagem)
+            textoValor.isEmpty() -> {
+                binding.editValor.error = "Digite um valor"
 
             }
-            movimentacao.data.isEmpty() -> {
-                mensagem = "preencha a data"
-                mensagemCampoVazio(mensagem)
-            }
-            movimentacao.categoria.isEmpty() -> {
-                mensagem = "preencha a categoria"
-                mensagemCampoVazio(mensagem)
-            }
-            movimentacao.descricao.isEmpty() -> {
-                mensagem = "preencha a descrição"
-                mensagemCampoVazio(mensagem)
-            }
-            else -> {
-                return true
+            textoData.isEmpty() -> {
+                binding.editDataDespesa.error = "Digite uma data"
 
             }
+            textoCategoria.isEmpty() -> {
+                binding.editCategoriaDespesa.error = "Digite uma categoria"
+
+            }
+            textoDescricao.isEmpty() -> {
+                binding.editDescricaoDespesa.error = "Digite uma descrição"
+
+            }else -> {
+            return true
+           }
         }
         return false
     }
 
-    fun getMovimentacao(): Movimentacao {
-
-        val textoValor = binding.editValor.text.toString().toDouble()
-        val textoData = binding.editDataDespesa.text.toString()
-        val textoCategoria = binding.editCategoriaDespesa.text.toString()
-        val textoDescricao = binding.editDescricaoDespesa.text.toString()
-
-
-
-        return Movimentacao(
-            valor = textoValor,
-            data = textoData,
-            categoria = textoCategoria,
-            descricao = textoDescricao
-        )
-
-
-    }
-
-
-    fun exibirDespesaTotal() {
-
-        val emailUsuario = recuperarEmail()
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        firebaseConnection().child("usuarios").child(idUsuario)
-
-        firebaseConnection().addValueEventListener(object : ValueEventListener {
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val usuario = snapshot.getValue(Usuario::class.java)
+    fun recuperarDespesaTotal() {
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        val usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
+        usuarioRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val usuario = dataSnapshot.getValue(Usuario::class.java)
                 if (usuario != null) {
                     despesaTotal = usuario.despesaTotal
                 }
             }
 
+            override fun onCancelled(databaseError: DatabaseError) {}
         })
-
     }
 
-
-    fun mensagemCampoVazio(mensagem: String) {
-
-
-        Toast.makeText(
-            this,
-            mensagem,
-            Toast.LENGTH_SHORT
-        ).show()
-
-
+    fun atualizarDespesa(despesa: Double?) {
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        val usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
+        usuarioRef.child("despesaTotal").setValue(despesa)
     }
+
 }
 
 

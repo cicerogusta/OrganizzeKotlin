@@ -1,102 +1,107 @@
 package com.example.organizzekotlin
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
+import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Usuario
 import com.example.organizzekotlin.util.Validation.isEmail
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.*
 
 class CadastroActivity : AppCompatActivity() {
 
-
+    private lateinit var autenticacao: FirebaseAuth
+    private lateinit var usuario: Usuario
     lateinit var binding: ActivityCadastroBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonCadastrar.setOnClickListener {
-            verificarECadastrar()
-        }
+        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+        sh.edit().putBoolean("jumpSlides", true).apply()
+
+        binding.buttonCadastrar.setOnClickListener { if (verificaCampos()) cadastrarUsuario() }
+
     }
 
-
-    fun verificarECadastrar() {
-
+    private fun verificaCampos(): Boolean {
         val textoNome = binding.editNome.text.toString()
         val textoEmail = binding.editEmail.text.toString()
         val textoSenha = binding.editSenha.text.toString()
 
-        val mensagem: String
-
         when {
             textoNome.isEmpty() -> {
-                mensagem = "nome inválido!"
-                binding.editNome.error = mensagem
-
+                binding.editNome.error = "Insira um nome!"
             }
             textoEmail.isEmpty() || !textoEmail.isEmail() -> {
-                mensagem = "email inválido!"
-                binding.editEmail.error = mensagem
-
+                binding.editEmail.error =
+                    "Insira um emal válido"
             }
-            textoSenha.isEmpty() || textoSenha == " " || textoSenha.length < 6 -> {
-                mensagem = "Digite uma senha mais forte com letras e numeros"
-                binding.editSenha.error = mensagem
+            textoSenha.isEmpty() || textoSenha.length < 6 -> {
+                binding.editSenha.error =
+                    "Insira uma senha válida"
             }
             else -> {
-                cadastrar(textoEmail, textoSenha)
-
-
+                usuario = Usuario()
+                usuario.nome = textoNome
+                usuario.email = textoEmail
+                usuario.senha = textoSenha
+                return true
             }
         }
-
-
+        return false
     }
 
-
-    fun cadastrar(email: String, senha: String) {
+    fun cadastrarUsuario() {
         binding.loading = true
-        firebaseAuth().createUserWithEmailAndPassword(email, senha)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    val idUsuario: String = Base64Custom.codificarBase64(email)
-                    Usuario().idUsuario = idUsuario
-                    Usuario().salvar()
-
-                } else {
-                    var excecao = ""
-                    try {
-                        throw task.exception!!
-                    } catch (e: FirebaseAuthWeakPasswordException) {
-                        excecao = "Digite uma senha mais forte!"
-                    } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        excecao = "Por favor, digite um e-mail válido"
-                    } catch (e: FirebaseAuthUserCollisionException) {
-                        excecao = "Este conta já foi cadastrada"
-                    } catch (e: Exception) {
-                        excecao = "Erro ao cadastrar usuário: " + e.message
-                        e.printStackTrace()
-                    }
-
-                    Toast.makeText(
-                        this@CadastroActivity,
-                        excecao,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+        autenticacao = FirebaseHelper.firebaseAuth()
+        autenticacao.createUserWithEmailAndPassword(
+            usuario.email, usuario.senha
+        ).addOnCompleteListener(
+            this
+        ) { task ->
+            if (task.isSuccessful) {
+                val idUsuario = Base64Custom.codificarBase64(usuario.email)
+                usuario.idUsuario = idUsuario
+                usuario.salvar()
+                finish()
+            } else {
+                dialogSignUp()
             }
+        }
         binding.loading = false
     }
+
+    fun dialogSignUp() {
+
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
+
+        //Configura AlertDialog
+        alertDialog.setTitle("Não foi possível cadastrar!")
+        alertDialog.setMessage("Verifique se os dados foram digitados corretamente!")
+        alertDialog.setCancelable(false)
+        alertDialog.setPositiveButton(
+            "Confirmar"
+        ) { dialog, which ->
+
+
+        }
+        alertDialog.setNegativeButton(
+            "Cancelar"
+        ) { dialog, which ->
+
+        }
+        alertDialog.create()?.show()
+    }
+
 }
 
 

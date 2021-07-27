@@ -18,6 +18,8 @@ data class Movimentacao(
 ) {
 
 
+    val valorAsString get() = valor.toString()
+
     fun salvar(dataEscolhida: String) {
 
         val autentication: FirebaseAuth = firebaseAuth()

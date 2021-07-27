@@ -46,7 +46,7 @@
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabSalvar"
+            android:id="@+id/fabSalvarReceita"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -149,7 +149,7 @@
             android:layout_marginRight="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/fabSalvar"
+            app:layout_constraintBottom_toTopOf="@+id/fabSalvarReceita"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"

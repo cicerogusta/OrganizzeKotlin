@@ -1,7 +1,6 @@
 package com.example.organizzekotlin.firebase
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -11,6 +10,11 @@ object FirebaseHelper {
 
     fun firebaseAuth() = FirebaseAuth.getInstance()
 
-    fun recuperarEmail() = firebaseAuth().currentUser?.email
+    fun recuperarEmail() = firebaseAuth().currentUser?.email.toString()
+
+    fun remover(path: String) {
+        FirebaseDatabase.getInstance().reference.child(path).removeValue()
+    }
+
 
 }

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="android.view.View" />
 
         <variable
-            name="adapterMov"
-            type="android.widget.Button" />
+            name="movimentacao"
+            type="com.example.organizzekotlin.model.Movimentacao" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,8 +24,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:text="Motivo do Gasto"
+            android:layout_marginTop="7.5dp"
+            android:text="@{movimentacao.categoria}"
+            tools:text="Motivo do gasto"
             app:layout_constraintEnd_toStartOf="@+id/value"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,18 +38,20 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:gravity="center"
-            android:text="99.99"
-
+            android:text="@{movimentacao.valorAsString}"
             app:layout_constraintBottom_toBottomOf="@id/title1"
             app:layout_constraintEnd_toStartOf="@id/deleteBtn"
             app:layout_constraintStart_toEndOf="@+id/title1"
-            app:layout_constraintTop_toTopOf="@+id/title1" />
+            app:layout_constraintTop_toTopOf="@+id/title1"
+            tools:text="99.99" />
 
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Gasto"
+            android:text="@{movimentacao.descricao}"
+            tools:text="Gasto"
+            android:layout_marginBottom="7.5dp"
             app:layout_constraintEnd_toEndOf="@id/value"
             app:layout_constraintStart_toStartOf="@id/title1"
             app:layout_constraintTop_toBottomOf="@id/title1" />
@@ -55,7 +60,6 @@
             android:id="@+id/deleteBtn"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:onClick="excluirMovimentacao"
             android:src="@android:drawable/ic_menu_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

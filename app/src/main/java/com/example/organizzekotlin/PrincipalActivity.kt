@@ -2,120 +2,156 @@ package com.example.organizzekotlin
 
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.organizzekotlin.adapter.AdapterMovimentacao
 import com.example.organizzekotlin.databinding.ActivityPrincipalBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
-import com.example.organizzekotlin.firebase.FirebaseHelper.recuperarEmail
+import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import java.text.DecimalFormat
 import java.util.*
 
 class PrincipalActivity : AppCompatActivity() {
-
+    private var calendarView: MaterialCalendarView? = null
+    private var textoSaudacao: TextView? = null
+    private var textoSaldo: TextView? = null
     private var despesaTotal = 0.0
     private var receitaTotal = 0.0
-    private var resumoGastos = 0.0
-    lateinit var mesAnoSelecionado: String
-
-    private val movimentacao: Movimentacao? = null
+    private var resumoUsuario = 0.0
+    private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
+    private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
+    private var usuarioRef: DatabaseReference? = null
+    private var valueEventListenerUsuario: ValueEventListener? = null
+    private var valueEventListenerMovimentacoes: ValueEventListener? = null
+    private lateinit var recyclerView: RecyclerView
+    private var movimentacao: Movimentacao = Movimentacao()
+    private var movimentacaoRef: DatabaseReference? = null
+    private var mesAnoSelecionado: String? = null
     lateinit var binding: ActivityPrincipalBinding
-    private lateinit var adapterMovmentacao: AdapterMovimentacao
-    private val movimentacoes: List<Movimentacao> =
-        ArrayList()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Configurar RecyclerView
+        textoSaldo = binding.textSaldo
+        textoSaudacao = binding.textSaudacao
+        calendarView = binding.calendarView
+        recyclerView = binding.recyclerMovimentos
+        configuraCalendarView()
+        atualizarSaldo()
+
+
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        val recyclerView = binding.recyclerMovimentos
         recyclerView.layoutManager = layoutManager
 
-        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
-
-        sh.edit().putBoolean("jumpSlides", true).apply()
-
-        recuperarResumo()
-        configuraCalendarView()
-
-
-        binding.menuDespesa.setOnClickListener { abrirActivityDespesa() }
-        binding.menuReceita.setOnClickListener { abrirActivityReceita() }
-
-
+        binding.menuDespesa.setOnClickListener { adicionarDespesa() }
+        binding.menuReceita.setOnClickListener { adicionarReceita() }
     }
 
 
     fun atualizarSaldo() {
-
-        val emailUsuario = recuperarEmail().toString()
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario)
-        firebaseConnection().child("usuarios").child(idUsuario)
-        if (movimentacao != null) {
-            if (movimentacao.tipo == "r") {
-                receitaTotal -= movimentacao.valor
-                firebaseConnection().child("receitaTotal").setValue(receitaTotal)
-            }
-        }
-        if (movimentacao != null) {
-            if (movimentacao.tipo == "d") {
-                despesaTotal -= movimentacao.valor
-                firebaseConnection().child("despesaTotal").setValue(despesaTotal)
-            }
-        }
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
+        receitaTotal -= movimentacao.valor
+        usuarioRef!!.child("receitaTotal").setValue(receitaTotal - despesaTotal)
     }
 
+    fun recuperarMovimentacoes() {
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        movimentacaoRef = firebaseRef.child("movimentacao")
+            .child(idUsuario)
+            .child(mesAnoSelecionado!!)
+        valueEventListenerMovimentacoes =
+            movimentacaoRef!!.addValueEventListener(object : ValueEventListener {
+                @SuppressLint("RestrictedApi")
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val listMovimentacao = mutableListOf<Movimentacao>()
+                    for (movimentacaoSnapshot in dataSnapshot.children) {
+                        val movimentacao = movimentacaoSnapshot.getValue(Movimentacao::class.java)
+                        if (movimentacao != null) {
+                            movimentacao.key = movimentacaoSnapshot.ref.path.toString()
+                            listMovimentacao.add(movimentacao)
 
-    fun excluirMovimentacao(view: View) {
+
+                        }
+                    }
+
+                    binding.recyclerMovimentos.adapter =
+                        AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
+                }
 
 
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
-
-        //Configura AlertDialog
-        alertDialog.setTitle("Excluir Movimentação da Conta")
-        alertDialog.setMessage("Você tem certeza que deseja realmente excluir essa movimentação de sua conta?")
-        alertDialog.setCancelable(false)
-        alertDialog.setPositiveButton(
-            "Confirmar"
-        ) { dialog, which ->
-
-            firebaseConnection().child("movimentacao").child(mesAnoSelecionado).removeValue()
-            atualizarSaldo()
-        }
-        alertDialog.setNegativeButton(
-            "Cancelar"
-        ) { dialog, which ->
-            Toast.makeText(
-                this@PrincipalActivity,
-                "Cancelado",
-                Toast.LENGTH_SHORT
-            ).show()
-
-        }
-        alertDialog.create()?.show()
-        adapterMovmentacao.notifyDataSetChanged()
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
     }
 
+    fun recuperarResumo() {
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
+        valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val usuario = dataSnapshot.getValue(Usuario::class.java)
+                if (usuario != null) {
+                    despesaTotal = usuario.despesaTotal
+                }
+                if (usuario != null) {
+                    receitaTotal = usuario.receitaTotal
+                }
+                resumoUsuario = receitaTotal - despesaTotal
+                val decimalFormat = DecimalFormat("0.##")
+                val resultadoFormatado = decimalFormat.format(resumoUsuario)
+                if (usuario != null) {
+                    textoSaudacao!!.text = "Olá, " + usuario.nome
+                }
+                textoSaldo!!.text = "R$ $resultadoFormatado"
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_principal, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuSair -> {
+                autenticacao.signOut()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun adicionarDespesa() {
+        startActivity(Intent(this, DespesasActivity::class.java))
+    }
+
+    fun adicionarReceita() {
+        startActivity(Intent(this, ReceitasActivity::class.java))
+    }
 
     fun configuraCalendarView() {
         val meses = arrayOf<CharSequence>(
@@ -132,120 +168,31 @@ class PrincipalActivity : AppCompatActivity() {
             "Novembro",
             "Dezembro"
         )
-
-        binding.calendarView.setTitleMonths(meses)
-        var mesSelecionado = String.format("%02d", binding.calendarView.currentDate.month)
-        mesAnoSelecionado = mesSelecionado + "" + binding.calendarView.currentDate.year
-        binding.calendarView.setOnMonthChangedListener { widget, date ->
-            mesSelecionado = String.format("%02d", date.month + 1)
+        calendarView!!.setTitleMonths(meses)
+        val dataAtual = calendarView!!.currentDate
+        val mesSelecionado = String.format("%02d", dataAtual.month + 1)
+        mesAnoSelecionado = mesSelecionado + "" + dataAtual.year
+        calendarView!!.setOnMonthChangedListener { widget, date ->
+            val mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
-            recuperarMovimentacoes(mesAnoSelecionado)
-
-
+            movimentacaoRef!!.removeEventListener(valueEventListenerMovimentacoes!!)
+            recuperarMovimentacoes()
         }
-
     }
 
-    fun recuperarMovimentacoes(mesAnoSelecionado: String) {
-
-        val emailUsuario = recuperarEmail()
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        val movimentacaoRef = firebaseConnection()
-            .child("movimentacao")
-            .child(idUsuario)
-            .child(mesAnoSelecionado)
-
-        movimentacaoRef.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val movimentacoes = mutableListOf<Movimentacao>()
-                for (dados: DataSnapshot in snapshot.children) {
-
-                    val movimentacao = dados.getValue(Movimentacao::class.java)
-                    movimentacao!!.key = dados.key.toString()
-
-                    movimentacoes.add(movimentacao)
-
-                }
-                cofiguraAdapter(movimentacoes)
-            }
-
-        })
-
-
+    override fun onStart() {
+        super.onStart()
+        recuperarResumo()
+        recuperarMovimentacoes()
     }
 
-    fun recuperarResumo() {
-
-        val emailUsuario = recuperarEmail()
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario.toString())
-        val autenticacao = firebaseConnection().child("usuarios").child(idUsuario)
-
-        autenticacao.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val usuario = snapshot.getValue(Usuario::class.java)
-
-                if (usuario != null) {
-                    despesaTotal = usuario.despesaTotal
-                    receitaTotal = usuario.receitaTotal
-                    resumoGastos = receitaTotal - despesaTotal
-
-                    val decimalFormat = DecimalFormat("0.##").format(resumoGastos)
-
-
-                    binding.textSaudacao.text = "Olá, " + usuario.nome
-                    binding.textSaldo.text = "R$ $decimalFormat"
-                }
-
-            }
-
-        })
+    override fun onStop() {
+        super.onStop()
+        usuarioRef!!.removeEventListener(valueEventListenerUsuario!!)
+        movimentacaoRef!!.removeEventListener(valueEventListenerMovimentacoes!!)
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_principal, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuSair -> {
-                val autenticacao = firebaseAuth()
-                autenticacao.signOut()
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-
-    fun cofiguraAdapter(movimentacoes: List<Movimentacao>) {
-
-
-        adapterMovmentacao = AdapterMovimentacao(movimentacoes, this)
-
-        binding.recyclerMovimentos.adapter = adapterMovmentacao
-
-
-    }
-
-    fun abrirActivityDespesa() {
-        startActivity(Intent(this, DespesasActivity::class.java))
-    }
-
-    fun abrirActivityReceita() {
-        startActivity(Intent(this, ReceitasActivity::class.java))
-    }
-
-
 }
+
+
+
+

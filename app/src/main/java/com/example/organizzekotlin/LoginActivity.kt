@@ -16,9 +16,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonEntrar.setOnClickListener {
-            login()
-        }
+        binding.buttonEntrar.setOnClickListener { login() }
     }
 
     fun login() {
@@ -40,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             else -> {
+                binding.loading = true
                 FirebaseHelper.firebaseAuth().signInWithEmailAndPassword(textoEmail, textoSenha)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
@@ -48,6 +47,8 @@ class LoginActivity : AppCompatActivity() {
                         }else {
                             binding.editEmailLogin.error = "Não existe usuário com este email cadastrado!"
                         }
+                        binding.loading = false
+
                     }
 
             }
