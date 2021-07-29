@@ -11,6 +11,10 @@
         <variable
             name="principal"
             type="com.example.organizzekotlin.PrincipalActivity" />
+
+        <variable
+            name="saldo"
+            type="String" />
     </data>
 
 
@@ -51,7 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="R$ 0"
+                android:text="@{saldo}"
+                tools:text="R$ 100000000"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />

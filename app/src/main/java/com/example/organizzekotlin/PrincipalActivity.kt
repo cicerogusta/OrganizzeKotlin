@@ -53,7 +53,6 @@ class PrincipalActivity : AppCompatActivity() {
         calendarView = binding.calendarView
         recyclerView = binding.recyclerMovimentos
         configuraCalendarView()
-        atualizarSaldo()
 
 
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
@@ -64,17 +63,9 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun atualizarSaldo() {
-        val emailUsuario = autenticacao.currentUser!!.email
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
-        usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
-        receitaTotal -= movimentacao.valor
-        usuarioRef!!.child("receitaTotal").setValue(receitaTotal - despesaTotal)
-    }
-
     fun recuperarMovimentacoes() {
-        val emailUsuario = autenticacao.currentUser!!.email
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        val emailUsuario = FirebaseHelper.recuperarEmail()
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario)
         movimentacaoRef = firebaseRef.child("movimentacao")
             .child(idUsuario)
             .child(mesAnoSelecionado!!)
@@ -83,15 +74,27 @@ class PrincipalActivity : AppCompatActivity() {
                 @SuppressLint("RestrictedApi")
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val listMovimentacao = mutableListOf<Movimentacao>()
+                    var despesaTotal = 0.0
+                    var receitaTotal = 0.0
+
                     for (movimentacaoSnapshot in dataSnapshot.children) {
                         val movimentacao = movimentacaoSnapshot.getValue(Movimentacao::class.java)
                         if (movimentacao != null) {
+                            if (movimentacao.tipo == "d") {
+                                despesaTotal += movimentacao.valor
+
+                            }
+                            if (movimentacao.tipo == "r") {
+                                receitaTotal += movimentacao.valor
+                            }
                             movimentacao.key = movimentacaoSnapshot.ref.path.toString()
                             listMovimentacao.add(movimentacao)
 
 
+
                         }
                     }
+                    atualizarReceita(despesaTotal)
 
                     binding.recyclerMovimentos.adapter =
                         AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
@@ -112,21 +115,24 @@ class PrincipalActivity : AppCompatActivity() {
                 val usuario = dataSnapshot.getValue(Usuario::class.java)
                 if (usuario != null) {
                     despesaTotal = usuario.despesaTotal
-                }
-                if (usuario != null) {
-                    receitaTotal = usuario.receitaTotal
-                }
-                resumoUsuario = receitaTotal - despesaTotal
-                val decimalFormat = DecimalFormat("0.##")
-                val resultadoFormatado = decimalFormat.format(resumoUsuario)
-                if (usuario != null) {
                     textoSaudacao!!.text = "Olá, " + usuario.nome
+                    receitaTotal = usuario.receitaTotal
+
                 }
-                textoSaldo!!.text = "R$ $resultadoFormatado"
+
+                resumoUsuario = receitaTotal - despesaTotal
+
             }
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+    }
+
+    fun atualizarReceita(despesaTotal: Double) {
+        val decimalFormat = DecimalFormat("0.##")
+        val resultadoFormatado = decimalFormat.format(receitaTotal - despesaTotal)
+
+        textoSaldo!!.text = "R$ $resultadoFormatado"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -184,6 +190,7 @@ class PrincipalActivity : AppCompatActivity() {
         super.onStart()
         recuperarResumo()
         recuperarMovimentacoes()
+
     }
 
     override fun onStop() {

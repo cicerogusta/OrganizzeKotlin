@@ -11,6 +11,7 @@ import com.example.organizzekotlin.R
 import com.example.organizzekotlin.databinding.RowMovimentacaoBinding
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.model.Movimentacao
+import com.example.organizzekotlin.model.Usuario
 
 class AdapterMovimentacao(
     private var movimentacoes: MutableList<Movimentacao>,
@@ -47,7 +48,10 @@ class AdapterMovimentacao(
             ) { _, _ ->
 
 
-                FirebaseHelper.remover(movimentacao.key)
+                FirebaseHelper.removerMovimentacao(movimentacao.key)
+
+
+
 
 
             }
