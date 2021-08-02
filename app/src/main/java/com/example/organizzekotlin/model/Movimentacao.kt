@@ -13,7 +13,7 @@ data class Movimentacao(
     var categoria: String = "",
     var descricao: String = "",
     var tipo: String = "",
-    var valor: Double = 0.0,
+    var valor: Double = 0.00,
     var key: String = ""
 ) {
 

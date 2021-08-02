@@ -30,11 +30,16 @@ class AdapterMovimentacao(
         val movimentacao = movimentacoes[position]
         holder.binding.movimentacao = movimentacao
 
+
         holder.binding.value.setTextColor(context.resources.getColor(R.color.colorAccentReceita, null))
+
+
+
         if (movimentacao.tipo == "d") {
             holder.binding.value.setTextColor(context.resources.getColor(R.color.colorAccent, null))
             holder.binding.value.text = "-" + movimentacao.valor
-            holder.binding.value.setTextColor(context.resources.getColor(R.color.colorAccent, null))
+
+
         }
         holder.binding.deleteBtn.setOnClickListener {
             val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)

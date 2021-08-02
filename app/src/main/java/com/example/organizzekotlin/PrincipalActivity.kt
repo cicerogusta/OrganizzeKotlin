@@ -29,9 +29,6 @@ class PrincipalActivity : AppCompatActivity() {
     private var calendarView: MaterialCalendarView? = null
     private var textoSaudacao: TextView? = null
     private var textoSaldo: TextView? = null
-    private var despesaTotal = 0.0
-    private var receitaTotal = 0.0
-    private var resumoUsuario = 0.0
     private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
     private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
     private var usuarioRef: DatabaseReference? = null
@@ -69,68 +66,73 @@ class PrincipalActivity : AppCompatActivity() {
         movimentacaoRef = firebaseRef.child("movimentacao")
             .child(idUsuario)
             .child(mesAnoSelecionado!!)
-        valueEventListenerMovimentacoes =
-            movimentacaoRef!!.addValueEventListener(object : ValueEventListener {
-                @SuppressLint("RestrictedApi")
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val listMovimentacao = mutableListOf<Movimentacao>()
-                    var despesaTotal = 0.0
-                    var receitaTotal = 0.0
+        valueEventListenerMovimentacoes = (object : ValueEventListener {
+            @SuppressLint("RestrictedApi")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val listMovimentacao = mutableListOf<Movimentacao>()
+                var receita = 0.0
+                var despesa = 0.0
 
-                    for (movimentacaoSnapshot in dataSnapshot.children) {
-                        val movimentacao = movimentacaoSnapshot.getValue(Movimentacao::class.java)
-                        if (movimentacao != null) {
-                            if (movimentacao.tipo == "d") {
-                                despesaTotal += movimentacao.valor
-
-                            }
-                            if (movimentacao.tipo == "r") {
-                                receitaTotal += movimentacao.valor
-                            }
-                            movimentacao.key = movimentacaoSnapshot.ref.path.toString()
-                            listMovimentacao.add(movimentacao)
-
+                for (movimentacaoSnapshot in dataSnapshot.children) {
+                    val movimentacaoFirebase =
+                        movimentacaoSnapshot.getValue(Movimentacao::class.java)
+                    if (movimentacaoFirebase != null) {
+                        if (movimentacao.tipo == "d") {
+                            despesa -= movimentacao.valor
 
 
                         }
+                        if (movimentacao.tipo == "r") {
+                            receita += movimentacao.valor
+
+
+                        }
+
+                        movimentacao.key = movimentacaoSnapshot.ref.path.toString()
+                        listMovimentacao.add(movimentacao)
+
+
                     }
-                    atualizarReceita(despesaTotal)
-
-                    binding.recyclerMovimentos.adapter =
-                        AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
                 }
+                atualizarReceita(receita, despesa)
+
+                binding.recyclerMovimentos.adapter =
+                    AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
+            }
 
 
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+        movimentacaoRef!!.addValueEventListener(valueEventListenerMovimentacoes!!)
     }
 
     fun recuperarResumo() {
         val emailUsuario = autenticacao.currentUser!!.email
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
         usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
+        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
         valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val usuario = dataSnapshot.getValue(Usuario::class.java)
                 if (usuario != null) {
-                    despesaTotal = usuario.despesaTotal
                     textoSaudacao!!.text = "Olá, " + usuario.nome
-                    receitaTotal = usuario.receitaTotal
+
 
                 }
 
-                resumoUsuario = receitaTotal - despesaTotal
 
             }
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+
     }
 
-    fun atualizarReceita(despesaTotal: Double) {
+    @SuppressLint("SetTextI18n")
+    fun atualizarReceita(receita: Double, despesa: Double) {
         val decimalFormat = DecimalFormat("0.##")
-        val resultadoFormatado = decimalFormat.format(receitaTotal - despesaTotal)
+        val resultadoFormatado = decimalFormat.format(receita - despesa)
 
         textoSaldo!!.text = "R$ $resultadoFormatado"
     }
@@ -199,6 +201,8 @@ class PrincipalActivity : AppCompatActivity() {
         movimentacaoRef!!.removeEventListener(valueEventListenerMovimentacoes!!)
     }
 }
+
+
 
 
 
