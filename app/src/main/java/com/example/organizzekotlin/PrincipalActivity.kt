@@ -39,6 +39,8 @@ class PrincipalActivity : AppCompatActivity() {
     private var movimentacaoRef: DatabaseReference? = null
     private var mesAnoSelecionado: String? = null
     lateinit var binding: ActivityPrincipalBinding
+    var receita = 0.0
+    var despesa = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,8 +72,7 @@ class PrincipalActivity : AppCompatActivity() {
             @SuppressLint("RestrictedApi")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val listMovimentacao = mutableListOf<Movimentacao>()
-                var receita = 0.0
-                var despesa = 0.0
+
 
                 for (movimentacaoSnapshot in dataSnapshot.children) {
                     val movimentacaoFirebase =
@@ -94,7 +95,8 @@ class PrincipalActivity : AppCompatActivity() {
 
                     }
                 }
-                atualizarReceita(receita, despesa)
+
+
 
                 binding.recyclerMovimentos.adapter =
                     AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
@@ -106,11 +108,10 @@ class PrincipalActivity : AppCompatActivity() {
         movimentacaoRef!!.addValueEventListener(valueEventListenerMovimentacoes!!)
     }
 
-    fun recuperarResumo() {
+    fun recuperaDadosUsuario() {
         val emailUsuario = autenticacao.currentUser!!.email
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
         usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
-        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
         valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -128,6 +129,9 @@ class PrincipalActivity : AppCompatActivity() {
         })
 
     }
+
+
+
 
     @SuppressLint("SetTextI18n")
     fun atualizarReceita(receita: Double, despesa: Double) {
@@ -190,7 +194,7 @@ class PrincipalActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        recuperarResumo()
+        recuperaDadosUsuario()
         recuperarMovimentacoes()
 
     }

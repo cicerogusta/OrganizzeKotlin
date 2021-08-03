@@ -18,9 +18,6 @@ class DespesasActivity : AppCompatActivity() {
     private lateinit var campoDescricao: EditText
     private lateinit var campoValor: EditText
     private lateinit var movimentacao: Movimentacao
-    private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
-    private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
-    private var despesa: Double = 0.0
     lateinit var binding: ActivityDespesasBinding
 
 
@@ -35,7 +32,6 @@ class DespesasActivity : AppCompatActivity() {
         campoValor = binding.editValorDespesa
 
 
-        //Preenche o campo data com a date atual
         campoData.setText(DateCustom.dataAtual())
 
         binding.fabSalvarDespesa.setOnClickListener { if (validarCamposDespesa()) salvarDespesa() }
@@ -45,15 +41,14 @@ class DespesasActivity : AppCompatActivity() {
 
     fun salvarDespesa() {
 
-        val data: String = campoData.getText().toString()
-        val valorRecuperado = campoValor.text.toString().toDouble()
-        movimentacao.valor = valorRecuperado
-        movimentacao.categoria = campoCategoria.getText().toString()
-        movimentacao.descricao = campoDescricao.getText().toString()
+        val data: String = campoData.text.toString()
+        val valorDespesa = campoValor.text.toString().toDouble()
+        movimentacao = Movimentacao()
+        movimentacao.valor = valorDespesa
+        movimentacao.categoria = campoCategoria.text.toString()
+        movimentacao.descricao = campoDescricao.text.toString()
         movimentacao.data = data
         movimentacao.tipo = "d"
-        val despesaAtualizada = despesa + valorRecuperado
-        atualizarDespesa(despesaAtualizada)
         movimentacao.salvar(data)
         finish()
 
@@ -62,8 +57,8 @@ class DespesasActivity : AppCompatActivity() {
     fun validarCamposDespesa(): Boolean {
         val textoValor = campoValor.text.toString()
         val textoData: String = campoData.getText().toString()
-        val textoCategoria: String = campoCategoria.getText().toString()
-        val textoDescricao: String = campoDescricao.getText().toString()
+        val textoCategoria: String = campoCategoria.text.toString()
+        val textoDescricao: String = campoDescricao.text.toString()
 
         when {
             textoValor.isEmpty() -> {
@@ -83,26 +78,13 @@ class DespesasActivity : AppCompatActivity() {
 
             }
             else -> {
-                movimentacao = Movimentacao()
-                movimentacao.valor = textoValor.toDouble()
-                movimentacao.data = textoData
-                movimentacao.tipo = "d"
-                movimentacao.categoria = textoCategoria
-                movimentacao.descricao = textoDescricao
+
                 return true
             }
         }
         return false
     }
 
-
-
-    fun atualizarDespesa(despesa: Double?) {
-        val emailUsuario = autenticacao.currentUser!!.email
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
-        val usuarioRef = firebaseRef.child("movimentacao").child(idUsuario)
-        usuarioRef.child("despesa").setValue(despesa)
-    }
 
 }
 
