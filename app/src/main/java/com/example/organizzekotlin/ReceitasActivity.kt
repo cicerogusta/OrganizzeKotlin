@@ -35,7 +35,7 @@ class ReceitasActivity : AppCompatActivity() {
             movimentacao = Movimentacao()
             val data: String = campoData.text.toString()
             val receita = campoValor.text.toString().toDouble()
-            movimentacao.receita = receita
+            movimentacao.valor += receita
             movimentacao.categoria = campoCategoria.text.toString()
             movimentacao.descricao = campoDescricao.text.toString()
             movimentacao.data = data

@@ -125,20 +125,16 @@ class PrincipalActivity : AppCompatActivity() {
     fun recuperaMovimentacao() {
         val emailUsuario = autenticacao.currentUser!!.email
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
-        usuarioRef = firebaseRef.child("movimentacao").child(idUsuario)
-        valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
+        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
+        valueEventListenerUsuario = movimentacaoRef!!.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val movimentacao = dataSnapshot.getValue(Movimentacao::class.java)
                 if (movimentacao != null) {
-                    despesa = movimentacao.despesa
-                    receita = movimentacao.receita
-                    val resumoGastos = receita - despesa
-
-                    val decimalFormat = DecimalFormat("0.##").format(resumoGastos)
 
 
-                    binding.textSaldo.text = "R$ $decimalFormat"
+
+//                    binding.saldo = movimentacao.valor
 
                 }
 

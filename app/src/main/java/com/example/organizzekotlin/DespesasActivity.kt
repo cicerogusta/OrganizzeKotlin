@@ -44,7 +44,7 @@ class DespesasActivity : AppCompatActivity() {
         val data: String = campoData.text.toString()
         val valorDespesa = campoValor.text.toString().toDouble()
         movimentacao = Movimentacao()
-        movimentacao.valor = valorDespesa
+        movimentacao.valor -= valorDespesa
         movimentacao.categoria = campoCategoria.text.toString()
         movimentacao.descricao = campoDescricao.text.toString()
         movimentacao.data = data

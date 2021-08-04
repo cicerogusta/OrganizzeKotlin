@@ -14,7 +14,7 @@
 
         <variable
             name="saldo"
-            type="String" />
+            type="com.example.organizzekotlin.model.Movimentacao" />
     </data>
 
 
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@{saldo}"
+                android:text="@{saldo.valorAsString}"
                 tools:text="R$ 100000000"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
