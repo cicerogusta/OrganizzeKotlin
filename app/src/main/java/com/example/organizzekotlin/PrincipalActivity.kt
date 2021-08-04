@@ -2,6 +2,7 @@ package com.example.organizzekotlin
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -35,9 +36,8 @@ class PrincipalActivity : AppCompatActivity() {
     private var valueEventListenerUsuario: ValueEventListener? = null
     private var valueEventListenerMovimentacoes: ValueEventListener? = null
     private lateinit var recyclerView: RecyclerView
-    private var movimentacao: Movimentacao = Movimentacao()
     private var movimentacaoRef: DatabaseReference? = null
-    private var mesAnoSelecionado: String? = null
+    private lateinit var mesAnoSelecionado: String
     lateinit var binding: ActivityPrincipalBinding
     var receita = 0.0
     var despesa = 0.0
@@ -46,6 +46,13 @@ class PrincipalActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        recuperaDadosUsuario()
+        recuperaMovimentacao()
+
+        val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+
+        sh.edit().putBoolean("jumpSlides", true).apply()
 
         textoSaldo = binding.textSaldo
         textoSaudacao = binding.textSaudacao
@@ -62,12 +69,12 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun recuperarMovimentacoes() {
+    fun recuperarMovimentacoes(mesAnoSelecionado: String) {
         val emailUsuario = FirebaseHelper.recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario)
         movimentacaoRef = firebaseRef.child("movimentacao")
             .child(idUsuario)
-            .child(mesAnoSelecionado!!)
+            .child(mesAnoSelecionado)
         valueEventListenerMovimentacoes = (object : ValueEventListener {
             @SuppressLint("RestrictedApi")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -77,26 +84,11 @@ class PrincipalActivity : AppCompatActivity() {
                 for (movimentacaoSnapshot in dataSnapshot.children) {
                     val movimentacaoFirebase =
                         movimentacaoSnapshot.getValue(Movimentacao::class.java)
-                    if (movimentacaoFirebase != null) {
-                        if (movimentacao.tipo == "d") {
-                            despesa -= movimentacao.valor
 
+                    movimentacaoFirebase!!.key = movimentacaoSnapshot.ref.path.toString()
 
-                        }
-                        if (movimentacao.tipo == "r") {
-                            receita += movimentacao.valor
-
-
-                        }
-
-                        movimentacao.key = movimentacaoSnapshot.ref.path.toString()
-                        listMovimentacao.add(movimentacao)
-
-
-                    }
+                    listMovimentacao.add(movimentacaoFirebase)
                 }
-
-
 
                 binding.recyclerMovimentos.adapter =
                     AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
@@ -130,16 +122,34 @@ class PrincipalActivity : AppCompatActivity() {
 
     }
 
+    fun recuperaMovimentacao() {
+        val emailUsuario = autenticacao.currentUser!!.email
+        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
+        usuarioRef = firebaseRef.child("movimentacao").child(idUsuario)
+        valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val movimentacao = dataSnapshot.getValue(Movimentacao::class.java)
+                if (movimentacao != null) {
+                    despesa = movimentacao.despesa
+                    receita = movimentacao.receita
+                    val resumoGastos = receita - despesa
+
+                    val decimalFormat = DecimalFormat("0.##").format(resumoGastos)
 
 
+                    binding.textSaldo.text = "R$ $decimalFormat"
 
-    @SuppressLint("SetTextI18n")
-    fun atualizarReceita(receita: Double, despesa: Double) {
-        val decimalFormat = DecimalFormat("0.##")
-        val resultadoFormatado = decimalFormat.format(receita - despesa)
+                }
 
-        textoSaldo!!.text = "R$ $resultadoFormatado"
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_principal, menu)
@@ -181,29 +191,16 @@ class PrincipalActivity : AppCompatActivity() {
             "Dezembro"
         )
         calendarView!!.setTitleMonths(meses)
-        val dataAtual = calendarView!!.currentDate
-        val mesSelecionado = String.format("%02d", dataAtual.month + 1)
-        mesAnoSelecionado = mesSelecionado + "" + dataAtual.year
+        var mesSelecionado = String.format("%02d", binding.calendarView.currentDate.month + 1)
+        mesAnoSelecionado = mesSelecionado + "" + binding.calendarView.currentDate.year
         calendarView!!.setOnMonthChangedListener { widget, date ->
-            val mesSelecionado = String.format("%02d", date.month + 1)
+            mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
-            movimentacaoRef!!.removeEventListener(valueEventListenerMovimentacoes!!)
-            recuperarMovimentacoes()
+            recuperarMovimentacoes(mesAnoSelecionado)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        recuperaDadosUsuario()
-        recuperarMovimentacoes()
 
-    }
-
-    override fun onStop() {
-        super.onStop()
-        usuarioRef!!.removeEventListener(valueEventListenerUsuario!!)
-        movimentacaoRef!!.removeEventListener(valueEventListenerMovimentacoes!!)
-    }
 }
 
 
