@@ -39,8 +39,7 @@ class PrincipalActivity : AppCompatActivity() {
     private var movimentacaoRef: DatabaseReference? = null
     private lateinit var mesAnoSelecionado: String
     lateinit var binding: ActivityPrincipalBinding
-    var receita = 0.0
-    var despesa = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +47,6 @@ class PrincipalActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         recuperaDadosUsuario()
-        recuperaMovimentacao()
 
         val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
 
@@ -69,7 +67,7 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun recuperarMovimentacoes(mesAnoSelecionado: String) {
+    fun recuperarListaMovimentacoes(mesAnoSelecionado: String) {
         val emailUsuario = FirebaseHelper.recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario)
         movimentacaoRef = firebaseRef.child("movimentacao")
@@ -88,6 +86,8 @@ class PrincipalActivity : AppCompatActivity() {
                     movimentacaoFirebase!!.key = movimentacaoSnapshot.ref.path.toString()
 
                     listMovimentacao.add(movimentacaoFirebase)
+
+                    binding.movimentacao = movimentacaoFirebase
                 }
 
                 binding.recyclerMovimentos.adapter =
@@ -112,29 +112,6 @@ class PrincipalActivity : AppCompatActivity() {
                     textoSaudacao!!.text = "Olá, " + usuario.nome
 
 
-                }
-
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-
-    }
-
-    fun recuperaMovimentacao() {
-        val emailUsuario = autenticacao.currentUser!!.email
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
-        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
-        valueEventListenerUsuario = movimentacaoRef!!.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val movimentacao = dataSnapshot.getValue(Movimentacao::class.java)
-                if (movimentacao != null) {
-
-
-
-//                    binding.saldo = movimentacao.valor
 
                 }
 
@@ -192,7 +169,7 @@ class PrincipalActivity : AppCompatActivity() {
         calendarView!!.setOnMonthChangedListener { widget, date ->
             mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
-            recuperarMovimentacoes(mesAnoSelecionado)
+            recuperarListaMovimentacoes(mesAnoSelecionado)
         }
     }
 

@@ -14,14 +14,11 @@ data class Movimentacao(
     var descricao: String = "",
     var tipo: String = "",
     var valor: Double = 0.00,
-    var despesa: Double = 0.00,
-    var receita: Double = 0.00,
     var key: String = ""
 ) {
 
 
     val valorAsString get() = valor.toString()
-    val despesaAsString get() = despesa.toString()
 
     fun salvar(dataEscolhida: String) {
 
