@@ -38,7 +38,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:gravity="center"
-            android:text="@{movimentacao.valorAsString}"
+            android:text="@{movimentacao.ValortoString()}"
             app:layout_constraintBottom_toBottomOf="@id/title1"
             app:layout_constraintEnd_toStartOf="@id/deleteBtn"
             app:layout_constraintStart_toEndOf="@+id/title1"

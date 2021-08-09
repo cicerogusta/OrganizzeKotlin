@@ -39,6 +39,9 @@ class PrincipalActivity : AppCompatActivity() {
     private var movimentacaoRef: DatabaseReference? = null
     private lateinit var mesAnoSelecionado: String
     lateinit var binding: ActivityPrincipalBinding
+    private var despesaTotal = 0.0
+    private var receitaTotal = 0.0
+    var resumoUsuario = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +49,6 @@ class PrincipalActivity : AppCompatActivity() {
         binding = ActivityPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        recuperaDadosUsuario()
 
         val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
 
@@ -67,14 +69,14 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
 
-    fun recuperarListaMovimentacoes(mesAnoSelecionado: String) {
+    fun recuperarMovimentacoes(mesAnoSelecionado: String) {
         val emailUsuario = FirebaseHelper.recuperarEmail()
         val idUsuario = Base64Custom.codificarBase64(emailUsuario)
         movimentacaoRef = firebaseRef.child("movimentacao")
             .child(idUsuario)
             .child(mesAnoSelecionado)
         valueEventListenerMovimentacoes = (object : ValueEventListener {
-            @SuppressLint("RestrictedApi")
+            @SuppressLint("RestrictedApi", "SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val listMovimentacao = mutableListOf<Movimentacao>()
 
@@ -87,11 +89,13 @@ class PrincipalActivity : AppCompatActivity() {
 
                     listMovimentacao.add(movimentacaoFirebase)
 
-                    binding.movimentacao = movimentacaoFirebase
+
                 }
 
                 binding.recyclerMovimentos.adapter =
                     AdapterMovimentacao(listMovimentacao, this@PrincipalActivity)
+
+
             }
 
 
@@ -112,7 +116,6 @@ class PrincipalActivity : AppCompatActivity() {
                     textoSaudacao!!.text = "Olá, " + usuario.nome
 
 
-
                 }
 
 
@@ -120,6 +123,35 @@ class PrincipalActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+
+        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
+        valueEventListenerMovimentacoes = movimentacaoRef!!.addValueEventListener(object : ValueEventListener{
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val movimentacao = snapshot.getValue(Movimentacao::class.java)
+                if (movimentacao != null) {
+                    despesaTotal = movimentacao.despesa
+                    receitaTotal = movimentacao.receita
+                    resumoUsuario = receitaTotal - despesaTotal
+
+                    val decimalFormat = DecimalFormat("0.##")
+                    val resultadoFormatado = decimalFormat.format(resumoUsuario)
+
+                    textoSaldo!!.text = "R$ $resultadoFormatado"
+                }
+
+
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
 
     }
 
@@ -169,8 +201,14 @@ class PrincipalActivity : AppCompatActivity() {
         calendarView!!.setOnMonthChangedListener { widget, date ->
             mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
-            recuperarListaMovimentacoes(mesAnoSelecionado)
+            recuperarMovimentacoes(mesAnoSelecionado)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        recuperaDadosUsuario()
+        configuraCalendarView()
     }
 
 

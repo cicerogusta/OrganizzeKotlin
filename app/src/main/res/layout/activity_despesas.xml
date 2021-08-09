@@ -8,9 +8,6 @@
 
         <import type="android.view.View" />
 
-        <variable
-            name="despesas"
-            type="com.example.organizzekotlin.DespesasActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

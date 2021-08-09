@@ -60,8 +60,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@{movimentacao.valorAsString}"
-                tools:text="R$ 100000000"
+                tools:text="Carregando..."
+                android:text="@{movimentacao.ValortoString()}"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
