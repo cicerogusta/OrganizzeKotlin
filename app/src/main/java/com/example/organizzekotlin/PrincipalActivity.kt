@@ -27,16 +27,14 @@ import java.text.DecimalFormat
 import java.util.*
 
 class PrincipalActivity : AppCompatActivity() {
-    private var calendarView: MaterialCalendarView? = null
-    private var textoSaudacao: TextView? = null
-    private var textoSaldo: TextView? = null
+
     private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
     private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
-    private var usuarioRef: DatabaseReference? = null
-    private var valueEventListenerUsuario: ValueEventListener? = null
-    private var valueEventListenerMovimentacoes: ValueEventListener? = null
+    private lateinit var usuarioRef: DatabaseReference
+    private lateinit var valueEventListenerUsuario: ValueEventListener
+    private lateinit var valueEventListenerMovimentacoes: ValueEventListener
     private lateinit var recyclerView: RecyclerView
-    private var movimentacaoRef: DatabaseReference? = null
+    private lateinit var movimentacaoRef: DatabaseReference
     private lateinit var mesAnoSelecionado: String
     lateinit var binding: ActivityPrincipalBinding
     private var despesaTotal = 0.0
@@ -54,9 +52,6 @@ class PrincipalActivity : AppCompatActivity() {
 
         sh.edit().putBoolean("jumpSlides", true).apply()
 
-        textoSaldo = binding.textSaldo
-        textoSaudacao = binding.textSaudacao
-        calendarView = binding.calendarView
         recyclerView = binding.recyclerMovimentos
         configuraCalendarView()
 
@@ -101,19 +96,19 @@ class PrincipalActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-        movimentacaoRef!!.addValueEventListener(valueEventListenerMovimentacoes!!)
+        movimentacaoRef.addValueEventListener(valueEventListenerMovimentacoes)
     }
 
     fun recuperaDadosUsuario() {
         val emailUsuario = autenticacao.currentUser!!.email
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
         usuarioRef = firebaseRef.child("usuarios").child(idUsuario)
-        valueEventListenerUsuario = usuarioRef!!.addValueEventListener(object : ValueEventListener {
+        valueEventListenerUsuario = usuarioRef.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val usuario = dataSnapshot.getValue(Usuario::class.java)
                 if (usuario != null) {
-                    textoSaudacao!!.text = "Olá, " + usuario.nome
+                    binding.nome = "Olá, " + usuario.nome
 
 
                 }
@@ -125,32 +120,30 @@ class PrincipalActivity : AppCompatActivity() {
         })
 
         movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
-        valueEventListenerMovimentacoes = movimentacaoRef!!.addValueEventListener(object : ValueEventListener{
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val movimentacao = snapshot.getValue(Movimentacao::class.java)
-                if (movimentacao != null) {
-                    despesaTotal = movimentacao.despesa
-                    receitaTotal = movimentacao.receita
-                    resumoUsuario = receitaTotal - despesaTotal
+        valueEventListenerMovimentacoes =
+            movimentacaoRef.addValueEventListener(object : ValueEventListener {
+                @SuppressLint("SetTextI18n")
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val movimentacao = snapshot.getValue(Movimentacao::class.java)
+                    if (movimentacao != null) {
+                        despesaTotal = movimentacao.despesa
+                        receitaTotal = movimentacao.receita
+                        resumoUsuario = receitaTotal - despesaTotal
 
-                    val decimalFormat = DecimalFormat("0.##")
-                    val resultadoFormatado = decimalFormat.format(resumoUsuario)
+                        val decimalFormat = DecimalFormat("0.##")
+                        val resultadoFormatado = decimalFormat.format(resumoUsuario)
 
-                    textoSaldo!!.text = "R$ $resultadoFormatado"
+                        binding.saldo = "R$ $resultadoFormatado"
+                    }
+
+
                 }
 
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
 
-
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
+            })
 
 
     }
@@ -195,10 +188,10 @@ class PrincipalActivity : AppCompatActivity() {
             "Novembro",
             "Dezembro"
         )
-        calendarView!!.setTitleMonths(meses)
+        binding.calendarView.setTitleMonths(meses)
         var mesSelecionado = String.format("%02d", binding.calendarView.currentDate.month + 1)
         mesAnoSelecionado = mesSelecionado + "" + binding.calendarView.currentDate.year
-        calendarView!!.setOnMonthChangedListener { widget, date ->
+        binding.calendarView.setOnMonthChangedListener { widget, date ->
             mesSelecionado = String.format("%02d", date.month + 1)
             mesAnoSelecionado = mesSelecionado + "" + date.year
             recuperarMovimentacoes(mesAnoSelecionado)

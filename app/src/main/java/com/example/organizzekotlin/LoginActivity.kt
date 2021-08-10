@@ -1,5 +1,6 @@
 package com.example.organizzekotlin
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,48 +17,71 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonEntrar.setOnClickListener { login() }
+        binding.buttonEntrar.setOnClickListener { if (verificaCamposLogin()) login() }
     }
 
-    fun login() {
+    fun verificaCamposLogin(): Boolean {
 
-        val textoEmail = binding.editEmailLogin.text.toString()
-        val textoSenha = binding.editSenhaLogin.text.toString()
-
-        val mensagem: String
 
         when {
-            textoEmail.isEmpty()  -> {
-                mensagem = "Preencha o campo de email"
-                binding.editEmailLogin.error = mensagem
+            binding.editEmailLogin.text.isEmpty() -> {
+                binding.editEmailLogin.error = "Digite o email para fazer login"
 
             }
-            textoSenha.isEmpty() -> {
-                mensagem = "Preencha o campo senha"
-                binding.editSenhaLogin.error = mensagem
+            binding.editSenhaLogin.text.isEmpty() -> {
+                binding.editSenhaLogin.error = "Digite a senha para fazer login"
             }
 
             else -> {
-                binding.loading = true
-                FirebaseHelper.firebaseAuth().signInWithEmailAndPassword(textoEmail, textoSenha)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            abrirTelaPrincipal()
-
-                        }else {
-                            binding.editEmailLogin.error = "Não existe usuário com este email cadastrado!"
-                        }
-                        binding.loading = false
-
-                    }
-
+               return true
             }
         }
+        return false
     }
+
+    fun login() {
+        binding.loading = true
+        FirebaseHelper.firebaseAuth().signInWithEmailAndPassword(binding.editEmailLogin.text.toString(),
+            binding.editSenhaLogin.text.toString()
+        )
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    abrirTelaPrincipal()
+
+                } else {
+                    dialogLogin()
+                }
+                binding.loading = false
+
+            }
+
+    }
+
 
     fun abrirTelaPrincipal() {
         startActivity(Intent(this, PrincipalActivity::class.java))
         finish()
+    }
+
+    fun dialogLogin() {
+
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
+
+        alertDialog.setTitle("Não foi possível entrar!")
+        alertDialog.setMessage("Não existe um usuário cadastrado com este email!")
+        alertDialog.setCancelable(false)
+        alertDialog.setPositiveButton(
+            "Confirmar"
+        ) { dialog, which ->
+
+
+        }
+        alertDialog.setNegativeButton(
+            "Cancelar"
+        ) { dialog, which ->
+
+        }
+        alertDialog.create()?.show()
     }
 
 

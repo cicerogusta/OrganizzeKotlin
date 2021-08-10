@@ -101,14 +101,14 @@
             android:layout_marginEnd="331dp"
             android:layout_marginRight="331dp"
             android:text="Categoria"
-            app:layout_constraintBottom_toTopOf="@+id/editCategoria"
+            app:layout_constraintBottom_toTopOf="@+id/editCategoriaReceita"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editDataReceita" />
 
         <EditText
-            android:id="@+id/editCategoria"
+            android:id="@+id/editCategoriaReceita"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -133,14 +133,14 @@
             android:layout_marginEnd="333dp"
             android:layout_marginRight="333dp"
             android:text="Descrição"
-            app:layout_constraintBottom_toTopOf="@+id/editDescricao"
+            app:layout_constraintBottom_toTopOf="@+id/editDescricaoReceita"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editCategoria" />
+            app:layout_constraintTop_toBottomOf="@+id/editCategoriaReceita" />
 
         <EditText
-            android:id="@+id/editDescricao"
+            android:id="@+id/editDescricaoReceita"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

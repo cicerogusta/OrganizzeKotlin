@@ -17,10 +17,6 @@ import com.google.firebase.database.ValueEventListener
 class ReceitasActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityReceitasBinding
-    private lateinit var campoValor: EditText
-    private lateinit var campoData: EditText
-    private lateinit var campoCategoria: EditText
-    private lateinit var campoDescricao: EditText
     private lateinit var movimentacao: Movimentacao
     private var receita: Double = 0.0
 
@@ -29,13 +25,9 @@ class ReceitasActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReceitasBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        campoValor = binding.editValor
-        campoData = binding.editDataReceita
-        campoCategoria = binding.editCategoria
-        campoDescricao = binding.editDescricao
 
-        campoData.setText(DateCustom.dataAtual())
-        recuperarReceitaTotal()
+        binding.editDataReceita.setText(DateCustom.dataAtual())
+        recuperarReceita()
 
         binding.fabSalvarReceita.setOnClickListener { salvarReceita() }
     }
@@ -43,11 +35,11 @@ class ReceitasActivity : AppCompatActivity() {
     fun salvarReceita() {
         if (validarCamposReceita()) {
             movimentacao = Movimentacao()
-            val data: String = campoData.text.toString()
-            val valorReceita = campoValor.text.toString().toDouble()
+            val data: String = binding.editDataReceita.text.toString()
+            val valorReceita = binding.editValor.text.toString().toDouble()
             movimentacao.valor = valorReceita
-            movimentacao.categoria = campoCategoria.text.toString()
-            movimentacao.descricao = campoDescricao.text.toString()
+            movimentacao.categoria = binding.editCategoriaReceita.text.toString()
+            movimentacao.descricao = binding.editDescricaoReceita.text.toString()
             movimentacao.data = data
             movimentacao.tipo = "r"
 
@@ -59,7 +51,7 @@ class ReceitasActivity : AppCompatActivity() {
         }
     }
 
-    fun recuperarReceitaTotal() {
+    fun recuperarReceita() {
         val emailUsuario: String = recuperarEmail()
         val idUsuario: String = Base64Custom.codificarBase64(emailUsuario)
         val usuarioRef: DatabaseReference = firebaseConnection().child("movimentacao").child(idUsuario)
@@ -83,26 +75,22 @@ class ReceitasActivity : AppCompatActivity() {
     }
 
     fun validarCamposReceita(): Boolean {
-        val textoValor = campoValor.text.toString()
-        val textoData: String = campoData.getText().toString()
-        val textoCategoria: String = campoCategoria.getText().toString()
-        val textoDescricao: String = campoDescricao.getText().toString()
 
         when {
-            textoValor.isEmpty() -> {
+            binding.editValor.text.isEmpty() -> {
                 binding.editValor.error = "Digite um valor"
 
             }
-            textoData.isEmpty() -> {
+            binding.editDataReceita.text.isEmpty() -> {
                 binding.editDataReceita.error = "Digite uma data"
 
             }
-            textoCategoria.isEmpty() -> {
-                binding.editCategoria.error = "Digite uma categoria"
+            binding.editCategoriaReceita.text.isEmpty() -> {
+                binding.editCategoriaReceita.error = "Digite uma categoria"
 
             }
-            textoDescricao.isEmpty() -> {
-                binding.editDescricao.error = "Digite uma descrição"
+            binding.editDescricaoReceita.text.isEmpty() -> {
+                binding.editDescricaoReceita.error = "Digite uma descrição"
 
             }
             else -> {

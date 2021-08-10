@@ -32,28 +32,22 @@ class CadastroActivity : AppCompatActivity() {
 
     }
 
-    private fun verificaCampos(): Boolean {
-        val textoNome = binding.editNome.text.toString()
-        val textoEmail = binding.editEmail.text.toString()
-        val textoSenha = binding.editSenha.text.toString()
+     fun verificaCampos(): Boolean {
+
 
         when {
-            textoNome.isEmpty() -> {
+            binding.editNome.text.isEmpty() -> {
                 binding.editNome.error = "Insira um nome!"
             }
-            textoEmail.isEmpty() || !textoEmail.isEmail() -> {
+            binding.editEmail.text.isEmpty() || !binding.editEmail.text.toString().isEmail() -> {
                 binding.editEmail.error =
                     "Insira um emal válido"
             }
-            textoSenha.isEmpty() || textoSenha.length < 6 -> {
+            binding.editSenha.text.isEmpty() || binding.editSenha.text.length < 6 -> {
                 binding.editSenha.error =
-                    "Insira uma senha válida"
+                    "Insira uma senha válida!"
             }
             else -> {
-                usuario = Usuario()
-                usuario.nome = textoNome
-                usuario.email = textoEmail
-                usuario.senha = textoSenha
                 return true
             }
         }
@@ -61,6 +55,11 @@ class CadastroActivity : AppCompatActivity() {
     }
 
     fun cadastrarUsuario() {
+        usuario = Usuario()
+        usuario.nome = binding.editNome.text.toString()
+        usuario.email = binding.editEmail.text.toString()
+        usuario.senha = binding.editSenha.text.toString()
+
         binding.loading = true
         autenticacao = FirebaseHelper.firebaseAuth()
         autenticacao.createUserWithEmailAndPassword(
@@ -84,9 +83,8 @@ class CadastroActivity : AppCompatActivity() {
 
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
 
-        //Configura AlertDialog
         alertDialog.setTitle("Não foi possível cadastrar!")
-        alertDialog.setMessage("Verifique se os dados foram digitados corretamente!")
+        alertDialog.setMessage("Já existe um usuário cadastrado com este email!")
         alertDialog.setCancelable(false)
         alertDialog.setPositiveButton(
             "Confirmar"

@@ -8,17 +8,14 @@
 
         <import type="android.view.View"/>
 
-        <variable
-            name="principal"
-            type="com.example.organizzekotlin.PrincipalActivity" />
 
         <variable
-            name="movimentacao"
-            type="com.example.organizzekotlin.model.Movimentacao" />
+            name="saldo"
+            type="String" />
 
         <variable
-            name="usuario"
-            type="com.example.organizzekotlin.model.Usuario" />
+            name="nome"
+            type="String" />
     </data>
 
 
@@ -50,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 tools:text="Carregando..."
-                android:text="@{usuario.nome}"
+                android:text="@{nome}"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -61,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 tools:text="Carregando..."
-                android:text="@{movimentacao.ValortoString()}"
+                android:text="@{saldo}"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
