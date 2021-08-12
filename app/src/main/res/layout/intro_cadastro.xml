@@ -10,7 +10,7 @@
 
         <variable
             name="introCadastro"
-            type="com.example.organizzekotlin.MainActivity" />
+            type="com.example.organizzekotlin.SlideActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

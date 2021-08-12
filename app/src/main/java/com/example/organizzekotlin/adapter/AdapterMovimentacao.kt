@@ -44,7 +44,6 @@ class AdapterMovimentacao(
         holder.binding.deleteBtn.setOnClickListener {
             val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
 
-            //Configura AlertDialog
             alertDialog.setTitle("Excluir Movimentação da Conta")
             alertDialog.setMessage("Você tem certeza que deseja realmente excluir essa movimentação de sua conta?")
             alertDialog.setCancelable(false)

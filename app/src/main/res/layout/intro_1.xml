@@ -10,7 +10,7 @@
 
         <variable
             name="intro1"
-            type="com.example.organizzekotlin.MainActivity" />
+            type="com.example.organizzekotlin.SlideActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

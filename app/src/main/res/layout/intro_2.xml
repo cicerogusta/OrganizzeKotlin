@@ -10,7 +10,7 @@
 
         <variable
             name="intro2"
-            type="com.example.organizzekotlin.MainActivity" />
+            type="com.example.organizzekotlin.SlideActivity" />
     </data>
 
 

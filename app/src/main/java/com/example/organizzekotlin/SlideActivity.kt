@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.heinrichreimersoftware.materialintro.app.IntroActivity
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide
 
-class MainActivity : IntroActivity() {
+class SlideActivity : IntroActivity() {
     private lateinit var autenticacao: FirebaseAuth
 
 
@@ -77,7 +77,7 @@ class MainActivity : IntroActivity() {
     }
 
     fun abrirTelaPrincipal() {
-        startActivity(Intent(this, PrincipalActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
     }
 
 

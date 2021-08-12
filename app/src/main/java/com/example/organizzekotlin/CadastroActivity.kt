@@ -3,16 +3,13 @@ package com.example.organizzekotlin
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityCadastroBinding
 import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Usuario
 import com.example.organizzekotlin.util.Validation.isEmail
-import com.google.firebase.auth.*
+import com.google.firebase.auth.FirebaseAuth
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -45,7 +42,7 @@ class CadastroActivity : AppCompatActivity() {
             }
             binding.editSenha.text.isEmpty() || binding.editSenha.text.length < 6 -> {
                 binding.editSenha.error =
-                    "Insira uma senha válida!"
+                    "Sua senha deve conter ao menos 6 caracteres!"
             }
             else -> {
                 return true

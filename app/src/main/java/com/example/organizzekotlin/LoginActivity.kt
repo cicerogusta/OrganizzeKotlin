@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     fun abrirTelaPrincipal() {
-        startActivity(Intent(this, PrincipalActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 

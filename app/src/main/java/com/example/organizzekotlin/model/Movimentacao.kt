@@ -7,7 +7,6 @@ import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.Exclude
 
 data class Movimentacao(
     var data: String = "",
@@ -15,8 +14,6 @@ data class Movimentacao(
     var descricao: String = "",
     var tipo: String = "",
     var valor: Double = 0.00,
-    var despesa: Double = 0.00,
-    var receita: Double = 0.00,
     var key: String = ""
 ) {
 

@@ -24,44 +24,44 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".PrincipalActivity"
-        tools:showIn="@layout/activity_principal">
+        tools:context=".HomeActivity"
+        tools:showIn="@layout/activity_home">
 
 
         <LinearLayout
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:layout_marginBottom="572dp"
             android:background="@color/colorPrimary"
             android:gravity="center"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/calendarView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/textSaudacao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                tools:text="Carregando..."
                 android:text="@{nome}"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="Carregando..." />
 
             <TextView
                 android:id="@+id/textSaldo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                tools:text="Carregando..."
                 android:text="@{saldo}"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                tools:text="Carregando..." />
 
             <TextView
                 android:layout_width="match_parent"
