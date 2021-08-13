@@ -32,8 +32,10 @@ class MovimementacaoActivity : AppCompatActivity() {
         val bundle = intent.extras
         if (bundle != null) {
             isDespesa = bundle.getBoolean("isDespesa")
+            binding.bg = isDespesa
 
         }
+
 
 
     }
