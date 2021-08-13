@@ -34,13 +34,14 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var movimentacaoRef: DatabaseReference
     private lateinit var mesAnoSelecionado: String
     lateinit var binding: ActivityHomeBinding
-    var resumoUsuario = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
 
         val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
@@ -70,16 +71,33 @@ class HomeActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val listMovimentacao = mutableListOf<Movimentacao>()
 
+                var somatorio = 0.0
 
                 for (movimentacaoSnapshot in dataSnapshot.children) {
                     val movimentacaoFirebase =
                         movimentacaoSnapshot.getValue(Movimentacao::class.java)
 
-                    movimentacaoFirebase!!.key = movimentacaoSnapshot.ref.path.toString()
+                    if (movimentacaoFirebase?.tipo == "r") {
 
-                    listMovimentacao.add(movimentacaoFirebase)
+                        somatorio += movimentacaoFirebase.valor
+                    } else if (movimentacaoFirebase?.tipo == "d") {
+
+                        somatorio -= movimentacaoFirebase.valor
+                    }
+
+
+                    if (movimentacaoFirebase != null) {
+                        movimentacaoFirebase.key = movimentacaoSnapshot.ref.path.toString()
+                        listMovimentacao.add(movimentacaoFirebase)
+
+
+                    }
+
+
 
                 }
+
+                binding.saldo = "R$ $somatorio"
 
 
                 binding.recyclerMovimentos.adapter =
@@ -117,26 +135,7 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    fun recuperarSaldoUsuario() {
-        val emailUsuario = autenticacao.currentUser!!.email
-        val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
-        movimentacaoRef = firebaseRef.child("movimentacao").child(idUsuario)
-        valueEventListenerUsuario =
-            movimentacaoRef.addValueEventListener(object : ValueEventListener {
-                @SuppressLint("SetTextI18n")
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val movimentacaoFirebase = dataSnapshot.getValue(Movimentacao::class.java)
-                    if (movimentacaoFirebase != null) {
 
-
-                    }
-
-
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
-            })
-    }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -200,7 +199,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         recuperaDadosUsuario()
-        recuperarSaldoUsuario()
         recuperarMovimentacoes()
     }
 
