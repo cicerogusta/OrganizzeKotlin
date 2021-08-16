@@ -23,15 +23,18 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="120dp"
             android:background="@{bg ? @color/colorPrimaryDespesa : @color/colorPrimaryReceita }"
+            tools:background="@color/colorPrimaryReceita"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed">
 
             <EditText
                 android:id="@+id/editValorDespesa"
@@ -42,6 +45,7 @@
                 android:gravity="end"
                 android:hint="R$ 00.00"
                 android:inputType="numberDecimal"
+                android:minHeight="48dp"
                 android:textAlignment="textEnd"
                 android:textColor="@android:color/white"
                 android:textSize="30sp" />
@@ -51,24 +55,23 @@
             android:id="@+id/fabSalvarDespesa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="177dp"
-            android:layout_marginEnd="178dp"
+            android:layout_marginStart="178dp"
+            android:layout_marginTop="338dp"
+            android:layout_marginEnd="177dp"
             android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editDescricaoDespesa"
             app:srcCompat="@drawable/ic_confirmar_branco_24dp"
-            tools:ignore="VectorDrawableCompat" />
+            tools:ignore="VectorDrawableCompat,SpeakableTextPresentCheck" />
 
         <TextView
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="359dp"
-            android:layout_marginRight="359dp"
+            android:layout_marginStart="191dp"
+            android:layout_marginEnd="191dp"
             android:text="Data"
             app:layout_constraintBottom_toTopOf="@+id/editDataDespesa"
             app:layout_constraintEnd_toEndOf="parent"
@@ -78,27 +81,23 @@
 
         <EditText
             android:id="@+id/editDataDespesa"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:ems="10"
             android:inputType="date"
+            android:minHeight="48dp"
             app:layout_constraintBottom_toTopOf="@+id/textView15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView14" />
+            app:layout_constraintTop_toBottomOf="@+id/textView14"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="345dp"
-            android:layout_marginRight="345dp"
+            android:layout_marginStart="173dp"
+            android:layout_marginEnd="177dp"
             android:text="Categoria"
             app:layout_constraintBottom_toTopOf="@+id/editCategoriaDespesa"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,27 +106,23 @@
 
         <EditText
             android:id="@+id/editCategoriaDespesa"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:ems="10"
             android:inputType="textPersonName"
+            android:minHeight="48dp"
             app:layout_constraintBottom_toTopOf="@+id/textView16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+            app:layout_constraintTop_toBottomOf="@+id/textView15"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="330dp"
-            android:layout_marginRight="330dp"
+            android:layout_marginStart="174dp"
+            android:layout_marginEnd="175dp"
             android:text="Descrição"
             app:layout_constraintBottom_toTopOf="@+id/editDescricaoDespesa"
             app:layout_constraintEnd_toEndOf="parent"
@@ -136,18 +131,15 @@
 
         <EditText
             android:id="@+id/editDescricaoDespesa"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/fabSalvarDespesa"
+            android:minHeight="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+            app:layout_constraintTop_toBottomOf="@+id/textView16"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

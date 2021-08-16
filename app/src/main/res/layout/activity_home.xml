@@ -16,6 +16,10 @@
         <variable
             name="nome"
             type="String" />
+
+        <variable
+            name="bg"
+            type="Boolean" />
     </data>
 
 
@@ -32,7 +36,8 @@
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:background="@color/colorPrimary"
+            android:background="@{bg ? @color/colorPrimaryReceita : @color/colorPrimaryDespesa }"
+            tools:background="@color/colorPrimary"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/calendarView"

@@ -42,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        configuraCalendarView()
 
 
         val sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
@@ -94,10 +95,10 @@ class HomeActivity : AppCompatActivity() {
                     }
 
 
-
                 }
 
                 binding.saldo = "R$ $somatorio"
+                changeColorBackground(somatorio)
 
 
                 binding.recyclerMovimentos.adapter =
@@ -112,6 +113,11 @@ class HomeActivity : AppCompatActivity() {
         movimentacaoRef.addValueEventListener(valueEventListenerMovimentacoes)
     }
 
+    fun changeColorBackground(somatorio: Double) {
+        binding.bg = somatorio > 0
+    }
+
+
     fun recuperaDadosUsuario() {
         val emailUsuario = autenticacao.currentUser!!.email
         val idUsuario = Base64Custom.codificarBase64(emailUsuario!!)
@@ -124,6 +130,8 @@ class HomeActivity : AppCompatActivity() {
                     binding.nome = "Olá, " + usuario.nome
 
 
+                } else {
+                    binding.nome = "Carregando..."
                 }
 
 
@@ -134,8 +142,6 @@ class HomeActivity : AppCompatActivity() {
 
 
     }
-
-
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -198,8 +204,8 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        recuperaDadosUsuario()
         recuperarMovimentacoes()
+        recuperaDadosUsuario()
     }
 
     override fun onStop() {

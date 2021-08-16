@@ -41,6 +41,7 @@ class AdapterMovimentacao(
 
 
         }
+
         holder.binding.deleteBtn.setOnClickListener {
             val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
 
