@@ -5,6 +5,7 @@ import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseAuth
 import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
+import com.example.organizzekotlin.util.toCurrency
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 
@@ -37,8 +38,8 @@ data class Movimentacao(
 
     }
 
-    fun ValortoString(): String {
-        return valor.toString()
+    fun valorToString(): String {
+        return valor.toCurrency()
     }
 
 

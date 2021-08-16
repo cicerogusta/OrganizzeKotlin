@@ -2,6 +2,7 @@ package com.example.organizzekotlin
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,14 +17,16 @@ import com.example.organizzekotlin.firebase.FirebaseHelper
 import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.model.Movimentacao
 import com.example.organizzekotlin.model.Usuario
+import com.example.organizzekotlin.util.toCurrency
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import java.text.NumberFormat
 import java.util.*
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : Activity() {
 
     private val autenticacao: FirebaseAuth = FirebaseHelper.firebaseAuth()
     private val firebaseRef: DatabaseReference = FirebaseHelper.firebaseConnection()
@@ -58,6 +61,13 @@ class HomeActivity : AppCompatActivity() {
 
         binding.menuDespesa.setOnClickListener { adicionarDespesa() }
         binding.menuReceita.setOnClickListener { adicionarReceita() }
+
+        binding.btnExit.setOnClickListener {
+            autenticacao.signOut()
+            startActivity(Intent(this, SlideActivity::class.java))
+            finish()
+
+        }
     }
 
 
@@ -97,7 +107,7 @@ class HomeActivity : AppCompatActivity() {
 
                 }
 
-                binding.saldo = "R$ $somatorio"
+                binding.saldo = somatorio.toCurrency()
                 changeColorBackground(somatorio)
 
 
@@ -143,22 +153,6 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_principal, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuSair -> {
-                autenticacao.signOut()
-                startActivity(Intent(this, SlideActivity::class.java))
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     fun adicionarDespesa() {
         val intent = (Intent(this, MovimementacaoActivity::class.java))
