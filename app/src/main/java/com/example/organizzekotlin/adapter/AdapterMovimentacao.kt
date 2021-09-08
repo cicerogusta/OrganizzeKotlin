@@ -3,6 +3,8 @@ package com.example.organizzekotlin.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.AssetManager
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +17,8 @@ import com.example.organizzekotlin.model.Usuario
 
 class AdapterMovimentacao(
     private var movimentacoes: MutableList<Movimentacao>,
-    var context: Context
+    var context: Context,
+    val assetManager: AssetManager
 ) :
     RecyclerView.Adapter<AdapterMovimentacao.MyViewHolder?>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -27,11 +30,14 @@ class AdapterMovimentacao(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
+        val textViewFont = Typeface.createFromAsset( assetManager,"Anton-Regular.ttf")
+
         val movimentacao = movimentacoes[position]
         holder.binding.movimentacao = movimentacao
 
 
         holder.binding.value.setTextColor(context.resources.getColor(R.color.colorAccentReceita, null))
+        holder.binding.value.typeface = textViewFont
 
 
 

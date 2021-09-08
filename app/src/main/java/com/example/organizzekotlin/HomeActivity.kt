@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -66,8 +67,12 @@ class HomeActivity : Activity() {
             autenticacao.signOut()
             startActivity(Intent(this, SlideActivity::class.java))
             finish()
-
         }
+
+        val appTitleFont = Typeface.createFromAsset(assets, "palettemosaic_regular.ttf")
+        val textViewFont = Typeface.createFromAsset(assets, "Anton-Regular.ttf")
+        binding.appTitle.typeface = appTitleFont
+        binding.textSaldo.typeface = textViewFont
     }
 
 
@@ -112,7 +117,7 @@ class HomeActivity : Activity() {
 
 
                 binding.recyclerMovimentos.adapter =
-                    AdapterMovimentacao(listMovimentacao, this@HomeActivity)
+                    AdapterMovimentacao(listMovimentacao, this@HomeActivity, assets)
 
 
             }

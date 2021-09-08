@@ -1,18 +1,15 @@
 package com.example.organizzekotlin
 
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import com.example.organizzekotlin.databinding.ActivityDespesasBinding
-import com.example.organizzekotlin.firebase.FirebaseHelper.firebaseConnection
-import com.example.organizzekotlin.firebase.FirebaseHelper.recuperarEmail
-import com.example.organizzekotlin.helper.Base64Custom
 import com.example.organizzekotlin.helper.DateCustom
 import com.example.organizzekotlin.model.Movimentacao
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.example.organizzekotlin.util.MoneyTextWatcher
+import com.example.organizzekotlin.util.toCurrency
+import java.lang.Exception
 
 class MovimementacaoActivity : AppCompatActivity() {
 
@@ -26,7 +23,23 @@ class MovimementacaoActivity : AppCompatActivity() {
         binding = ActivityDespesasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.editValorDespesa.addTextChangedListener(MoneyTextWatcher(binding.editValorDespesa))
+        binding.editValorDespesa.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        })
         binding.editDataDespesa.setText(DateCustom.dataAtual())
+
 
         binding.fabSalvarDespesa.setOnClickListener { if (validarCamposDespesa()) salvarDespesa() }
         val bundle = intent.extras
@@ -35,7 +48,6 @@ class MovimementacaoActivity : AppCompatActivity() {
             binding.bg = isDespesa
 
         }
-
 
 
     }

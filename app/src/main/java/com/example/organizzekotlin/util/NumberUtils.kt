@@ -8,3 +8,25 @@ fun Double.toCurrency(): String {
 
 }
 
+fun String.fromCurrency(): Double? {
+    return try {
+        this.toPlainString().parsePlainToDouble()
+    } catch (e: Exception) {
+        null
+    }
+}
+
+fun String.toPlainString(): String {
+    return this.replace("[.,R$\\s]".toRegex(), "")
+}
+
+fun String.parsePlainToDouble(): Double {
+    val value = this.toDouble()
+    return value.div(100)
+}
+
+
+
+
+
+

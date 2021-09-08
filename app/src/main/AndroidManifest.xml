@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".CadastroActivity" />
-        <activity android:name=".ReceitasActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".MovimementacaoActivity" />
         <activity android:name=".LoginActivity" />
